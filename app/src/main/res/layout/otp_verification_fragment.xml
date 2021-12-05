@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/otp_screen_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/whatsapp_logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/otp_screen_logo_top_margin"
+        />
+
+    <TextView
+        android:id="@+id/welcome_text_otp_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/otp_screen_welcome_textview_top_margin"
+        android:fontFamily="@font/poppins_medium"
+        android:text="@string/welcome_to_whatsapp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/otp_screen_logo" />
+
+    <RelativeLayout
+        android:id="@+id/text_view_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/otp_screen_edit_text_layout_start_margin"
+        android:layout_marginEnd="@dimen/otp_screen_edit_text_layout_end_margin"
+        android:layout_marginBottom="@dimen/welcome_screen_from_label_textview_bottom_margin"
+        android:background="@drawable/edit_text_otp_screen_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_text_otp_screen"
+        app:layout_constraintBottom_toTopOf="@id/resend_textView">
+
+        <EditText
+            android:id="@+id/otp_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:hint="- - - -"
+            android:textSize="24dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/resend_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="Resend OTP"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_layout"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/poppins_medium"
+        android:clickable="true"
+        android:textColor="@color/purple_700"
+        style="@style/Widget.MaterialComponents.TextView"
+        android:background="@null"/>
+
+    <Button
+        android:id="@+id/verifiy_button_otp_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/otp_screen_button_start_margin"
+        android:layout_marginEnd="@dimen/otp_screen_button_end_margin"
+        android:layout_marginBottom="@dimen/otp_screen_button_bottom_margin"
+        android:layout_marginTop="@dimen/otp_screen_button_top_margin"
+        android:background="@drawable/button_background"
+        android:fontFamily="@font/poppins_light"
+        android:text="@string/send"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/resend_textView"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
