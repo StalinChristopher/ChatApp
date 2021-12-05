@@ -11,4 +11,8 @@
     <string name="phone_edit_text_hint">\tEnter number</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="resend_otp">Resend OTP</string>
+    <string name="ok">OK</string>
+    <string name="set_your_status">Set your status</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="chatapp">ChatApp</string>
 </resources>

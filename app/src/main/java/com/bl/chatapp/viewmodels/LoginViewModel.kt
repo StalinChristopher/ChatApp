@@ -46,7 +46,7 @@ class LoginViewModel(private val context: Context) : ViewModel() {
                     _invalidPhoneNumberStatus.value = true
                 }
                 if (credential != null) {
-                    firebaseAuth.directSignIn(credential) {
+                    firebaseAuth.directSignIn(credential, mobileNumber) {
                         if (it != null) {
                             _gotoHomePageStatus.value = it
                         } else {
@@ -71,9 +71,8 @@ class LoginViewModel(private val context: Context) : ViewModel() {
                     _invalidPhoneNumberStatus.value = true
                 }
                 if (credential != null) {
-                    firebaseAuth.directSignIn(credential) {
+                    firebaseAuth.directSignIn(credential, mobileNumber) {
                         if (it != null) {
-                            SharedPref.addUserId(it.uid)
                             _gotoHomePageStatus.value = it
                         } else {
                             Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
@@ -84,10 +83,9 @@ class LoginViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    fun verifyOtp(context: Context, otp: String) {
-        firebaseAuth.otpVerification(verificationId, otp) {
+    fun verifyOtp(context: Context, otp: String, number: String) {
+        firebaseAuth.otpVerification(verificationId, otp, number) {
             if (it != null) {
-                SharedPref.addUserId(it.uid)
                 _gotoHomePageStatus.value = it
             } else {
                 Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
