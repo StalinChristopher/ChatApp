@@ -15,7 +15,7 @@ import com.bl.chatapp.viewmodels.ViewModelFactory
 class LoginScreenFragment : Fragment(R.layout.login_fragment) {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: LoginFragmentBinding
-    private lateinit var mobileNumber: String
+    private var mobileNumber: String = ""
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = LoginFragmentBinding.bind(view)
@@ -47,20 +47,12 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
                 }
             }
         }
-
     }
 
     private fun observers() {
         loginViewModel.gotoOtpVerificationPageStatus.observe(viewLifecycleOwner) {
             if (it) {
-                activity?.run {
-                    var bundle = Bundle()
-                    bundle.putString(PHONE_NUMBER, mobileNumber)
-                    var otpFragment = OtpVerificationFragment()
-                    otpFragment.arguments = bundle
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container_id, otpFragment).commit()
-                }
+                gotoOtpFragment()
             }
         }
 
@@ -75,5 +67,14 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
         }
     }
 
-
+    private fun gotoOtpFragment() {
+        activity?.run {
+            var bundle = Bundle()
+            bundle.putString(PHONE_NUMBER, mobileNumber)
+            var otpFragment = OtpVerificationFragment()
+            otpFragment.arguments = bundle
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_id, otpFragment).commit()
+        }
+    }
 }

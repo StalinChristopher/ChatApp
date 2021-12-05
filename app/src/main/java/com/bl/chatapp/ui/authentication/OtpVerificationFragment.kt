@@ -79,5 +79,4 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
         requireActivity().finish()
         startActivity(intent)
     }
-
 }

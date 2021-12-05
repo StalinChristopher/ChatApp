@@ -5,20 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/logo_imageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/welcome_screen_logo_layout_start_margin"
-        android:layout_marginTop="@dimen/welcome_screen_logo_layout_top_margin"
-        android:layout_marginEnd="@dimen/welcome_screen_logo_layout_end_margin"
-        android:layout_marginBottom="@dimen/welcome_screen_logo_layout_bottom_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/welcome_text"
-        app:srcCompat="@drawable/whatsapp_logo" />
-
     <TextView
         android:id="@+id/welcome_text"
         android:layout_width="0dp"
@@ -29,43 +15,42 @@
         android:text="@string/welcome_to_whatsapp"
         android:textAlignment="center"
         android:textSize="24sp"
+        android:fontFamily="@font/poppins_medium"
         app:layout_constraintBottom_toTopOf="@id/editTextView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_imageView" />
 
-    <RelativeLayout
-        android:id="@+id/editTextView"
+    <TextView
+        android:id="@+id/read_policy_textView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="@dimen/otp_screen_edit_text_layout_top_margin"
-        android:layout_marginEnd="50dp"
-        android:background="@drawable/edit_text_loginscreen_background"
-        app:layout_constraintBottom_toTopOf="@id/sendButton"
+        android:layout_marginStart="@dimen/welcome_screen_read_privacy_textview_start_margin"
+        android:layout_marginTop="127dp"
+        android:layout_marginEnd="@dimen/welcome_screen_read_privacy_textview_end_margin"
+        android:fontFamily="@font/poppins_medium"
+        android:text="@string/read_policy"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@id/from_textView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcome_text">
+        app:layout_constraintTop_toBottomOf="@id/sendButton" />
 
-        <EditText
-            android:id="@+id/phoneLoginEditText"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="0dp"
-            android:layout_toEndOf="@id/countryCode"
-            android:background="@null"
-            android:focusedByDefault="false"
-            android:fontFamily="@font/poppins_light"
-            android:inputType="phone" />
-
-        <com.hbb20.CountryCodePicker
-            android:id="@+id/countryCode"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center" />
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/logo_imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/welcome_screen_logo_layout_start_margin"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="@dimen/welcome_screen_logo_layout_end_margin"
+        app:layout_constraintBottom_toTopOf="@id/welcome_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/whatsapp_logo" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/sendButton"
@@ -81,25 +66,9 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/read_policy_textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextView" />
-
-    <TextView
-        android:id="@+id/read_policy_textView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/welcome_screen_read_privacy_textview_start_margin"
-        android:layout_marginTop="127dp"
-        android:layout_marginEnd="@dimen/welcome_screen_read_privacy_textview_end_margin"
-        android:fontFamily="@font/poppins_medium"
-        android:text="@string/read_policy"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@id/from_textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sendButton" />
 
     <TextView
         android:id="@+id/from_textView"
@@ -113,7 +82,43 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/read_policy_textView" />
+
+    <RelativeLayout
+        android:id="@+id/editTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="@dimen/otp_screen_edit_text_layout_top_margin"
+        android:layout_marginEnd="50dp"
+        android:background="@drawable/edit_text_loginscreen_background"
+        app:layout_constraintBottom_toTopOf="@id/sendButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_text">
+
+        <EditText
+            android:id="@+id/phoneLoginEditText"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@id/countryCode"
+            android:background="@null"
+            android:focusedByDefault="false"
+            android:fontFamily="@font/poppins_light"
+            android:hint="@string/phone_edit_text_hint"
+            android:inputType="phone" />
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/countryCode"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
