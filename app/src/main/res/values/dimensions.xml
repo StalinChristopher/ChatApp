@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="welcome_screen_logo_layout_top_margin">136dp</dimen>
+    <dimen name="welcome_screen_logo_layout_start_margin">129dp</dimen>
+    <dimen name="welcome_screen_logo_layout_end_margin">129dp</dimen>
+    <dimen name="welcome_screen_logo_layout_bottom_margin">43dp</dimen>
+
+    <dimen name="welcome_screen_welcome_text_top_margin">43dp</dimen>
+    <dimen name="welcome_screen_welcome_text_start_margin">51dp</dimen>
+    <dimen name="welcome_screen_welcome_text_end_margin">52dp</dimen>
+    <dimen name="welcome_screen_welcome_text_bottom_margin">32dp</dimen>
+
+    <dimen name="welcome_screen_edit_text_layout_top_margin">32dp</dimen>
+    <dimen name="welcome_screen_edit_text_layout_start_margin">36dp</dimen>
+    <dimen name="welcome_screen_edit_text_layout_end_margin">36dp</dimen>
+    <dimen name="welcome_screen_edit_text_layout_bottom_margin">67dp</dimen>
+
+    <dimen name="welcome_screen_edit_text_top_margin">10dp</dimen>
+    <dimen name="welcome_screen_edit_text_bottom_margin">11dp</dimen>
+    <dimen name="welcome_screen_edit_text_start_margin">16dp</dimen>
+    <dimen name="welcome_screen_edit_text_end_margin">37dp</dimen>
+
+    <dimen name="welcome_screen_flag_top_margin">8dp</dimen>
+    <dimen name="welcome_screen_flag_bottom_margin">9dp</dimen>
+    <dimen name="welcome_screen_flag_start_margin">35dp</dimen>
+    <dimen name="welcome_screen_flag_end_margin">16dp</dimen>
+    
+    <dimen name="welcome_screen_send_button_top_margin">67dp</dimen>
+    <dimen name="welcome_screen_send_button_start_margin">71dp</dimen>
+    <dimen name="welcome_screen_send_button_end_margin">68dp</dimen>
+    <dimen name="welcome_screen_send_button_bottom_margin">127dp</dimen>
+    
+    <dimen name="welcome_screen_read_privacy_textview_top_margin">127dp</dimen>
+    <dimen name="welcome_screen_read_privacy_textview_start_margin">35dp</dimen>
+    <dimen name="welcome_screen_read_privacy_textview_end_margin">35dp</dimen>
+    <dimen name="welcome_screen_read_privacy_textview_bottom_margin">52dp</dimen>
+
+    <dimen name="welcome_screen_from_label_textview_top_margin">52dp</dimen>
+    <dimen name="welcome_screen_from_label_textview_start_margin">146dp</dimen>
+    <dimen name="welcome_screen_from_label_textview_end_margin">149dp</dimen>
+    <dimen name="welcome_screen_from_label_textview_bottom_margin">44dp</dimen>
+
+    <dimen name="otp_screen_logo_top_margin">81dp</dimen>
+    <dimen name="otp_screen_logo_start_margin">128dp</dimen>
+    <dimen name="otp_screen_logo_end_margin">130dp</dimen>
+    <dimen name="otp_screen_logo_bottom_margin">42dp</dimen>
+
+    <dimen name="otp_screen_welcome_textview_top_margin">42dp</dimen>
+    <dimen name="otp_screen_welcome_textview_start_margin">51dp</dimen>
+    <dimen name="otp_screen_welcome_textview_end_margin">52dp</dimen>
+    <dimen name="otp_screen_welcome_textview_bottom_margin">22dp</dimen>
+
+    <dimen name="otp_screen_enter_otp_label_top_margin">22dp</dimen>
+    <dimen name="otp_screen_enter_otp_label_start_margin">133dp</dimen>
+    <dimen name="otp_screen_enter_otp_label_end_margin">135dp</dimen>
+    <dimen name="otp_screen_enter_otp_label_bottom_margin">26dp</dimen>
+
+    <dimen name="otp_screen_edit_text_layout_top_margin">26dp</dimen>
+    <dimen name="otp_screen_edit_text_layout_start_margin">88dp</dimen>
+    <dimen name="otp_screen_edit_text_layout_end_margin">89dp</dimen>
+    <dimen name="otp_screen_edit_text_layout_bottom_margin">48dp</dimen>
+
+    <dimen name="otp_screen_edit_text_top_margin">3dp</dimen>
+    <dimen name="otp_screen_edit_text_start_margin">36dp</dimen>
+    <dimen name="otp_screen_edit_text_end_margin">37dp</dimen>
+    <dimen name="otp_screen_edit_text_bottom_margin">3dp</dimen>
+    
+    <dimen name="otp_screen_button_top_margin">48dp</dimen>
+    <dimen name="otp_screen_button_start_margin">70dp</dimen>
+    <dimen name="otp_screen_button_end_margin">69dp</dimen>
+    <dimen name="otp_screen_button_bottom_margin">335dp</dimen>
+
+</resources>
