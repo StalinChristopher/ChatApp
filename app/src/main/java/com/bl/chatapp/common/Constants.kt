@@ -5,4 +5,5 @@ object Constants {
     const val PHONE_NUMBER = "phone_number"
     const val USER_DETAILS = "user_details"
     const val DEFAULT_USER_ID = "default_user_id"
+    const val SPLASH_SCREEN_VISIBILITY = "SPLASH_SCREEN_STATUS"
 }

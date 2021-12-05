@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.bl.chatapp.common.Constants.SPLASH_SCREEN_VISIBILITY
 import com.bl.chatapp.common.Constants.USER_DETAILS
 import com.bl.chatapp.databinding.ActivityHomeBinding
 import com.bl.chatapp.ui.authentication.AuthenticationActivity
@@ -38,6 +39,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun gotoAuthenticationActivity() {
         val intent = Intent(this, AuthenticationActivity::class.java)
+        intent.putExtra(SPLASH_SCREEN_VISIBILITY,false)
         startActivity(intent)
     }
 }
