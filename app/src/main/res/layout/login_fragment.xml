@@ -8,8 +8,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background"
-        android:alpha="0.5"/>
+        android:alpha="1.0"
+        android:background="@drawable/background_dark" />
 
     <TextView
         android:id="@+id/welcome_text"
@@ -19,6 +19,7 @@
         android:layout_marginTop="43dp"
         android:layout_marginEnd="@dimen/welcome_screen_welcome_text_end_margin"
         android:text="@string/welcome_to_whatsapp"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="24sp"
         android:fontFamily="@font/poppins_medium"
@@ -40,7 +41,7 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@id/from_textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sendButton" />
 
@@ -58,7 +59,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/whatsapp_logo" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/sendButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -118,13 +119,16 @@
             android:focusedByDefault="false"
             android:fontFamily="@font/poppins_light"
             android:hint="@string/phone_edit_text_hint"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:inputType="phone" />
 
         <com.hbb20.CountryCodePicker
             android:id="@+id/countryCode"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center" />
+            android:gravity="center"
+            app:ccp_contentColor="@color/white"/>
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

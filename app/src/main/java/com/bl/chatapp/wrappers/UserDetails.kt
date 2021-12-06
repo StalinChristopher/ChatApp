@@ -7,5 +7,6 @@ data class UserDetails(
     var newUser: Boolean = false,
     var userName: String = "",
     var status: String = "",
-    var phone: String = ""
+    var phone: String = "",
+    var profileImageUrl: String = ""
 ) : Serializable

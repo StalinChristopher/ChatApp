@@ -60,7 +60,7 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
             if (it) {
                 Toast.makeText(
                     requireContext(),
-                    "Something went wrong",
+                    getString(R.string.something_went_wrong),
                     Toast.LENGTH_SHORT
                 ).show()
             }

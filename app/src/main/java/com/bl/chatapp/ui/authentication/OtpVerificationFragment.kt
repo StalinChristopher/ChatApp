@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.chatapp.R
+import com.bl.chatapp.common.Constants
+import com.bl.chatapp.common.Constants.OTP
 import com.bl.chatapp.common.Constants.PHONE_NUMBER
 import com.bl.chatapp.common.Constants.USER_DETAILS
 import com.bl.chatapp.databinding.OtpVerificationFragmentBinding
@@ -43,7 +45,7 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
         listeners()
         observers()
         savedInstanceState?.let {
-            binding.otpEditText.setText(it.get("OTP") as String)
+            binding.otpEditText.setText(it.get(OTP) as String)
         }
 
     }
@@ -53,7 +55,7 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
         verifyButton.setOnClickListener {
             val otp = otpEditText.text.toString().trim()
             if (otp.isEmpty()) {
-                otpEditText.error = "Enter OTP"
+                otpEditText.error = getString(R.string.enter_otp)
             } else {
                 loginViewModel.verifyOtp(requireContext(), otp, phoneNumber!!)
             }
@@ -68,7 +70,6 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
     private fun observers() {
         loginViewModel.gotoHomePageStatus.observe(viewLifecycleOwner) {
             if (it != null) {
-//                gotoHomeActivity(it)
                 if(it.newUser) {
                     gotoNewUserFragment(it)
                 } else {
@@ -109,6 +110,6 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("OTP",otpEditText.text.toString())
+        outState.putString(OTP,otpEditText.text.toString())
     }
 }

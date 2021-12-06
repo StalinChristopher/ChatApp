@@ -38,4 +38,29 @@ class DatabaseLayer(private val context: Context) {
             }
         }
     }
+
+    suspend fun updateProfileDetails(user: UserDetails) : Boolean{
+        return withContext(Dispatchers.IO) {
+            try {
+                val status  = fireStoreDb.updateUserInfoFromDatabase(user)
+                true
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer", "update error")
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
+    suspend fun getUserDataFromId(uid: String): UserDetails? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val user = fireStoreDb.getUserInfoFromId(uid)
+                user
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer","fetch failed")
+                null
+            }
+        }
+    }
 }
