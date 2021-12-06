@@ -3,7 +3,6 @@ package com.bl.chatapp.authentication
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.wrappers.UserDetails
 import com.bl.chatapp.wrappers.VerificationIdToken
@@ -62,7 +61,7 @@ class FirebaseAuthentication {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    fun otpVerification(verificationID: String?, otp: String, listener: (UserDetails?) -> Unit) {
+    fun otpVerification(verificationID: String?, otp: String, phoneNumber: String, listener: (UserDetails?) -> Unit) {
         val credential = verificationID?.let { PhoneAuthProvider.getCredential(it, otp) }
         if (credential != null) {
             firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
@@ -70,6 +69,7 @@ class FirebaseAuthentication {
                     Log.i("FirebaseAuthentication", "otp successfully verified")
                     val res = task.result
                     val userDetails = UserDetails(res?.user?.uid.toString())
+                    userDetails.phone = phoneNumber
                     if (res?.additionalUserInfo?.isNewUser == true) {
                         Log.i("FirebaseAuth", "new user")
                         userDetails.newUser = true
@@ -92,12 +92,13 @@ class FirebaseAuthentication {
         }
     }
 
-    fun directSignIn(credential: PhoneAuthCredential, listener: (UserDetails?) -> Unit) {
+    fun directSignIn(credential: PhoneAuthCredential, phoneNumber: String, listener: (UserDetails?) -> Unit) {
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.i("FirebaseAuthentication", "otp successfully verified")
                 val res = task.result
                 val userDetails = UserDetails(res?.user?.uid.toString())
+                userDetails.phone = phoneNumber
                 if (res?.additionalUserInfo?.isNewUser == true) {
                     Log.i("FirebaseAuth", "new user")
                     userDetails.newUser = true
@@ -119,8 +120,8 @@ class FirebaseAuthentication {
         }
     }
 
-    fun logOutFromApp() {
-        SharedPref.clearAll()
+    fun logOutFromApp(context: Context) {
+        SharedPref.getInstance(context).clearAll()
         firebaseAuth.signOut()
     }
 
@@ -132,11 +133,11 @@ class FirebaseAuthentication {
     ) {
         Log.i("resend", "Reached")
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(phoneNumber) // Phone number to verify
-            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-            .setActivity(activity) // Activity (for callback binding)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(activity)
             .setCallbacks(callbacks)
-            .setForceResendingToken(resendToken!!)// OnVerificationStateChangedCallbacks
+            .setForceResendingToken(resendToken!!)
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
     }

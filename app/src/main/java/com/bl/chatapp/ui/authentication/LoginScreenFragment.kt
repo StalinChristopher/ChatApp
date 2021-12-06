@@ -41,7 +41,7 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
                 else -> {
                     var code = countryCodePicker.selectedCountryCodeWithPlus
                     mobileNumber = "$code$phoneNumber"
-                    Log.i("login", "$mobileNumber")
+                    Log.i("login", mobileNumber)
                     loginViewModel.loginWithPhoneNumber(requireActivity(), mobileNumber, true)
 
                 }
@@ -60,7 +60,7 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
             if (it) {
                 Toast.makeText(
                     requireContext(),
-                    "Invalid phone number. Please try again",
+                    "Something went wrong",
                     Toast.LENGTH_SHORT
                 ).show()
             }
