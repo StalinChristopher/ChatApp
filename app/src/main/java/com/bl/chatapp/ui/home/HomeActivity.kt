@@ -32,7 +32,7 @@ class HomeActivity : AppCompatActivity() {
     private fun listeners() {
         binding.logoutButton.setOnClickListener {
             Log.i("HomeActivity", "Reached")
-            loginViewModel.logOut()
+            loginViewModel.logOut(this)
             gotoAuthenticationActivity()
         }
     }

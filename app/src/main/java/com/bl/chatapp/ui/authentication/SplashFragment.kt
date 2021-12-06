@@ -16,7 +16,7 @@ class SplashFragment : Fragment(R.layout.splash_fragment) {
         binding = SplashFragmentBinding.bind(view)
         binding.splashScreenImage.alpha = 0f
         binding.splashScreenImage.animate().setDuration(1500).alpha(1f).withEndAction {
-            val userId = SharedPref.getUserId()
+            val userId = SharedPref.getInstance(requireContext()).getUserId()
             if (userId == Constants.DEFAULT_USER_ID) {
                 (activity as AuthenticationActivity).gotoLoginPage()
             } else {

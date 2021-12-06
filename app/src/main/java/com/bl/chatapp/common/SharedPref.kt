@@ -4,16 +4,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.bl.chatapp.common.Constants.DEFAULT_USER_ID
 
-object SharedPref {
+class SharedPref(private val context: Context) {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var sharedPrefEdit: SharedPreferences.Editor
-
-    fun initializePref(context: Context) {
-        sharedPreferences = context.getSharedPreferences("sharedPrefFile", Context.MODE_PRIVATE)
-        sharedPrefEdit = sharedPreferences.edit()
+    companion object {
+        private val instance: SharedPref? by lazy { null }
+        fun getInstance(context: Context): SharedPref = instance ?: SharedPref(context)
     }
 
+    private var sharedPreferences: SharedPreferences = context.getSharedPreferences("sharedPrefFile", Context.MODE_PRIVATE)
+    private var sharedPrefEdit: SharedPreferences.Editor = sharedPreferences.edit()
+    
     fun addKeyValue(key: String, value: String) {
         sharedPrefEdit.putString(key, value)
         sharedPrefEdit.apply()

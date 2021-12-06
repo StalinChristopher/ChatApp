@@ -24,7 +24,7 @@ class UserViewModel : ViewModel() {
             userDetails.status = statusText
             val user = DatabaseLayer.getInstance(context).addUserInfoToDatabase(userDetails)
             if(user != null) {
-                SharedPref.addUserId(userDetails.uid)
+                SharedPref.getInstance(context).addUserId(userDetails.uid)
                 _newUserAddStatus.postValue(user)
             }
         }
@@ -34,7 +34,7 @@ class UserViewModel : ViewModel() {
         viewModelScope.launch {
             val user = DatabaseLayer.getInstance(context).getUserInfoFromDatabase(userDetails)
             if(user != null) {
-                SharedPref.addUserId(userDetails.uid)
+                SharedPref.getInstance(context).addUserId(userDetails.uid)
                 _getUserInfoStatus.postValue(user)
             }
         }

@@ -17,7 +17,6 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthenticationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        SharedPref.initializePref(this)
         val splashStatus = intent.getBooleanExtra(SPLASH_SCREEN_VISIBILITY, true)
         if(splashStatus) {
             gotoSplashScreen()
