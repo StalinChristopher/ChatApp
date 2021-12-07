@@ -2,13 +2,9 @@ package com.bl.chatapp.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bl.chatapp.R
@@ -16,13 +12,12 @@ import com.bl.chatapp.common.Constants.SPLASH_SCREEN_VISIBILITY
 import com.bl.chatapp.common.Constants.USER_DETAILS
 import com.bl.chatapp.databinding.ActivityHomeBinding
 import com.bl.chatapp.ui.authentication.AuthenticationActivity
+import com.bl.chatapp.ui.home.adapters.FragmentAdapter
 import com.bl.chatapp.ui.profilescreen.ProfileActivity
 import com.bl.chatapp.viewmodels.LoginViewModel
 import com.bl.chatapp.viewmodels.UserViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory
 import com.bl.chatapp.wrappers.UserDetails
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
 
 class HomeActivity : AppCompatActivity() {

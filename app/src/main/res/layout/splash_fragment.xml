@@ -9,8 +9,8 @@
         android:id="@+id/splash_screen_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/green"
-        android:alpha="0.2"/>
+        android:background="@color/whatsapp_toolbar_color"
+        android:alpha="0.9"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/splash_screen_guideline1"

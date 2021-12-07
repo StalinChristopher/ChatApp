@@ -12,6 +12,8 @@
     <color name="whatsapp_toolbar_color">#232D36</color>
     <color name="whatsapp_toolbar_text_color">#9DA5AC</color>
     <color name = "whatsapp_chat_screen_color">#101D25</color>
+    <color name="chat_screen_sent_bubble_color">#054640</color>
+    <color name="chat_screen_sent_bubble_date_time_color">#80B3AE</color>
 
 
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#fff</color>
