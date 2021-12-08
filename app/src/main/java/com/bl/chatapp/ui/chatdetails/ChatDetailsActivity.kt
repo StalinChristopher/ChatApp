@@ -36,10 +36,10 @@ class ChatDetailsActivity : AppCompatActivity() {
         chatDetailViewModel = ViewModelProvider(
             this,
             ViewModelFactory(
-                ChatDetailViewModel(this, currentUser, foreignUser)
+                ChatDetailViewModel(currentUser, foreignUser)
             )
         )[ChatDetailViewModel::class.java]
-        chatDetailViewModel.createChannel(this, currentUser, foreignUser)
+        chatDetailViewModel.createChannel(currentUser, foreignUser)
         initializeView()
         initializeRecyclerView()
         listeners()
@@ -68,8 +68,7 @@ class ChatDetailsActivity : AppCompatActivity() {
         binding.sendMessageButton.setOnClickListener {
             var messageText = binding.chatDetailEditText.text.toString()
             if (messageText.isNotBlank()) {
-                chatDetailViewModel.sendNewMessage(
-                    this, currentUser, foreignUser,
+                chatDetailViewModel.sendNewMessage(currentUser, foreignUser,
                     messageText, "text"
                 )
             }

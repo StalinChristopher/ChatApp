@@ -19,6 +19,7 @@ import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.IMAGE_FROM_GALLERY_CODE
 import com.bl.chatapp.common.Constants.STORAGE_PERMISSION_CODE
 import com.bl.chatapp.common.Constants.USER_DETAILS
+import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.common.Validator
 import com.bl.chatapp.databinding.ActivityProfilescreenBinding
 import com.bl.chatapp.ui.home.HomeActivity
@@ -38,7 +39,8 @@ class ProfileActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        userViewModel.getUserInfoFromId(this)
+        val userId = SharedPref.getInstance(this).getUserId()
+        userViewModel.getUserInfoFromId(userId)
         binding = ActivityProfilescreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observers()
@@ -74,7 +76,7 @@ class ProfileActivity : AppCompatActivity(){
                     status = latestStatus, phone = currentUser.phone,
                     profileImageUrl = currentUser.profileImageUrl )
                 currentUser = updateUser
-                userViewModel.updateUserProfileDetails(this, updateUser)
+                userViewModel.updateUserProfileDetails(updateUser)
             }
 
         }
@@ -108,13 +110,14 @@ class ProfileActivity : AppCompatActivity(){
             var imageUri = data.data
             pleaseWaitDialog.show()
             profileImageButton.setImageURI(imageUri)
-            userViewModel.setProfileImage(this, imageUri!!, currentUser)
+            userViewModel.setProfileImage(imageUri!!, currentUser)
         }
     }
 
     private fun observers() {
         userViewModel.getUserInfoStatus.observe(this, {
             if(it != null) {
+                SharedPref.getInstance(this).addUserId(it.uid)
                 currentUser = it
                 initializeProfile(it)
             }

@@ -1,9 +1,7 @@
 package com.bl.chatapp.viewmodels
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +9,7 @@ import com.bl.chatapp.authservice.FirebaseAuthentication
 import com.bl.chatapp.wrappers.UserDetails
 import com.google.firebase.auth.PhoneAuthProvider
 
-class LoginViewModel(private val context: Context) : ViewModel() {
+class LoginViewModel() : ViewModel() {
     private var verificationId: String? = null
     private var resendToken: PhoneAuthProvider.ForceResendingToken? = null
     private var phoneNumber: String? = null
@@ -48,8 +46,6 @@ class LoginViewModel(private val context: Context) : ViewModel() {
                     firebaseAuth.directSignIn(credential, mobileNumber) {
                         if (it != null) {
                             _gotoHomePageStatus.value = it
-                        } else {
-                            Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -73,8 +69,6 @@ class LoginViewModel(private val context: Context) : ViewModel() {
                     firebaseAuth.directSignIn(credential, mobileNumber) {
                         if (it != null) {
                             _gotoHomePageStatus.value = it
-                        } else {
-                            Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -82,17 +76,15 @@ class LoginViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    fun verifyOtp(context: Context, otp: String, number: String) {
+    fun verifyOtp(otp: String, number: String) {
         firebaseAuth.otpVerification(verificationId, otp, number) {
             if (it != null) {
                 _gotoHomePageStatus.value = it
-            } else {
-                Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    fun logOut(context: Context) {
-        firebaseAuth.logOutFromApp(context)
+    fun logOut() {
+        firebaseAuth.logOutFromApp()
     }
 }

@@ -21,7 +21,7 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
         binding = LoginFragmentBinding.bind(view)
         loginViewModel = ViewModelProvider(
             requireActivity(),
-            ViewModelFactory(LoginViewModel(requireContext()))
+            ViewModelFactory(LoginViewModel())
         )[LoginViewModel::class.java]
         login()
         observers()

@@ -14,6 +14,7 @@ import com.bl.chatapp.common.Constants
 import com.bl.chatapp.common.Constants.OTP
 import com.bl.chatapp.common.Constants.PHONE_NUMBER
 import com.bl.chatapp.common.Constants.USER_DETAILS
+import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.OtpVerificationFragmentBinding
 import com.bl.chatapp.ui.home.HomeActivity
 import com.bl.chatapp.viewmodels.LoginViewModel
@@ -35,7 +36,7 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
         binding = OtpVerificationFragmentBinding.bind(view)
         loginViewModel = ViewModelProvider(
             requireActivity(),
-            ViewModelFactory(LoginViewModel(requireContext()))
+            ViewModelFactory(LoginViewModel())
         )[LoginViewModel::class.java]
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         phoneNumber = arguments?.get(PHONE_NUMBER) as String
@@ -56,7 +57,7 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
             if (otp.isEmpty()) {
                 otpEditText.error = getString(R.string.enter_otp)
             } else {
-                loginViewModel.verifyOtp(requireContext(), otp, phoneNumber!!)
+                loginViewModel.verifyOtp(otp, phoneNumber!!)
             }
         }
 
@@ -72,12 +73,12 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
                 if(it.newUser) {
                     gotoNewUserFragment(it)
                 } else {
-                    userViewModel.getUserData(requireContext(), it)
+                    userViewModel.getUserData(it)
                 }
             } else {
                 Toast.makeText(
                     requireContext(),
-                    getString(R.string.invalid_otp),
+                    getString(R.string.something_went_wrong),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -85,6 +86,7 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
 
         userViewModel.getUserInfoStatus.observe(viewLifecycleOwner) {
             if(it != null) {
+                SharedPref.getInstance(requireContext()).addUserId(it.uid)
                 gotoHomeActivity(it)
             }
         }

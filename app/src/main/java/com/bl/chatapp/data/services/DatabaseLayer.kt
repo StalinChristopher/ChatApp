@@ -11,13 +11,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
-class DatabaseLayer(private val context: Context) {
+class DatabaseLayer() {
     private var fireStoreDb: FirebaseDatabaseService = FirebaseDatabaseService()
 
-    companion object {
-        private val instance: DatabaseLayer? by lazy { null }
-        fun getInstance(context: Context): DatabaseLayer = instance ?: DatabaseLayer(context)
-    }
+//    companion object {
+//        private val instance: DatabaseLayer? by lazy { null }
+//        fun getInstance(context: Context): DatabaseLayer = instance ?: DatabaseLayer(context)
+//    }
 
     suspend fun addUserInfoToDatabase(userDetails: UserDetails): UserDetails? {
         return withContext(Dispatchers.IO) {

@@ -35,12 +35,13 @@ class ChatFragment : Fragment(R.layout.chat_fragment) {
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         chatViewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ChatViewModel(requireContext()))
+            ViewModelFactory(ChatViewModel())
         )[ChatViewModel::class.java]
         var uid = SharedPref.getInstance(requireContext()).getUserId()
         currentUser =
             UserDetails(uid = uid, userName = "", status = "", phone = "", profileImageUrl = "")
-        userViewModel.getUserInfoFromId(requireContext())
+        val userId = SharedPref.getInstance(requireContext()).getUserId()
+        userViewModel.getUserInfoFromId(userId)
         initializeRecyclerView()
         observers()
         listeners()
@@ -83,6 +84,6 @@ class ChatFragment : Fragment(R.layout.chat_fragment) {
         userRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         userRecyclerView.setHasFixedSize(true)
         userRecyclerView.adapter = usersAdapter
-        chatViewModel.getUserListFromDb(requireContext(), currentUser)
+        chatViewModel.getUserListFromDb(currentUser)
     }
 }

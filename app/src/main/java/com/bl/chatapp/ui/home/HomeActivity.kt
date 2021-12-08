@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.SPLASH_SCREEN_VISIBILITY
 import com.bl.chatapp.common.Constants.USER_DETAILS
+import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.ActivityHomeBinding
 import com.bl.chatapp.ui.authentication.AuthenticationActivity
 import com.bl.chatapp.ui.home.adapters.FragmentAdapter
@@ -40,11 +41,11 @@ class HomeActivity : AppCompatActivity() {
         setSupportActionBar(homeToolbar)
         loginViewModel = ViewModelProvider(
             this,
-            ViewModelFactory(LoginViewModel(this))
+            ViewModelFactory(LoginViewModel())
         )[LoginViewModel::class.java]
         listeners()
         currentUser = intent.getSerializableExtra(USER_DETAILS) as UserDetails
-        userViewModel.getUserData(this, currentUser)
+        userViewModel.getUserData(currentUser)
         initializeTabLayout()
         observers()
     }
@@ -52,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
     private fun observers() {
         userViewModel.getUserInfoStatus.observe(this, {
             if(it != null) {
+                SharedPref.getInstance(this).addUserId(it.uid)
                 currentUser = it
             }
         })
@@ -100,7 +102,8 @@ class HomeActivity : AppCompatActivity() {
         when (itemView) {
             R.id.profile_menu_item -> gotoProfileScreen()
             R.id.logout_menu_item -> {
-                loginViewModel.logOut(this)
+                SharedPref.getInstance(this).clearAll()
+                loginViewModel.logOut()
                 gotoAuthenticationActivity()
             }
         }
