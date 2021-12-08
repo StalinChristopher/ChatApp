@@ -9,10 +9,21 @@
     <string name="invalid_otp">Invalid OTP</string>
     <string name="otp_edit_text_hint">- - - - - -</string>
     <string name="phone_edit_text_hint">\tEnter number</string>
-    <string name="enter_otp">Enter OTP</string>
     <string name="resend_otp">Resend OTP</string>
     <string name="ok">OK</string>
     <string name="set_your_status">Set your status</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="chatapp">ChatApp</string>
+    <string name="add_profile_image">Add profile image</string>
+    <string name="profile">Profile</string>
+    <string name="log_out">Log Out</string>
+    <string name="change_profile_image">Change profile image</string>
+    <string name="username_cannot_be_empty">Username cannot be empty</string>
+    <string name="please_enter_username">Please enter your username</string>
+    <string name="please_enter_current_status">Please set your current status</string>
+    <string name="storage_access_required_toast">Storage access is required to upload</string>
+    <string name="chats">Chats</string>
+    <string name="groups">Groups</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="enter_otp">Enter OTP</string>
 </resources>

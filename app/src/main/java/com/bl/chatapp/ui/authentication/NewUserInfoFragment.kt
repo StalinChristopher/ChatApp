@@ -47,7 +47,6 @@ class NewUserInfoFragment : Fragment(R.layout.new_user_fragment){
         intent.putExtra(USER_DETAILS, user)
         requireActivity().finish()
         startActivity(intent)
-
     }
 
     private fun listeners() {
@@ -55,8 +54,8 @@ class NewUserInfoFragment : Fragment(R.layout.new_user_fragment){
             val userName = userNameEditText.text.toString()
             val statusText = statusEditText.text.toString()
             if(userName.isEmpty() && statusText.isEmpty()) {
-                userNameEditText.error = "Please enter your username"
-                statusEditText.error = "Please set your current status"
+                userNameEditText.error = getString(R.string.please_enter_username)
+                statusEditText.error = getString(R.string.please_enter_current_status)
             } else {
                 userViewModel.setUserData(requireContext(), userName, statusText, userDetails)
             }

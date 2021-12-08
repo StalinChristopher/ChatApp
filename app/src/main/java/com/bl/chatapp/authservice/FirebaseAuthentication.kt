@@ -1,4 +1,4 @@
-package com.bl.chatapp.authentication
+package com.bl.chatapp.authservice
 
 import android.app.Activity
 import android.content.Context

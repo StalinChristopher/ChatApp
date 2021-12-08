@@ -7,8 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bl.chatapp.authentication.FirebaseAuthentication
-import com.bl.chatapp.common.SharedPref
+import com.bl.chatapp.authservice.FirebaseAuthentication
 import com.bl.chatapp.wrappers.UserDetails
 import com.google.firebase.auth.PhoneAuthProvider
 
@@ -96,6 +95,4 @@ class LoginViewModel(private val context: Context) : ViewModel() {
     fun logOut(context: Context) {
         firebaseAuth.logOutFromApp(context)
     }
-
-
 }

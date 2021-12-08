@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background"
-        android:alpha="0.5"/>
+        android:alpha="1.0"
+        android:background="@drawable/background_dark"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <ImageView
         android:id="@+id/otp_screen_logo"
@@ -28,6 +31,7 @@
         android:layout_marginTop="40dp"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/welcome_to_whatsapp"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
@@ -52,7 +56,9 @@
             android:background="@null"
             android:fontFamily="@font/poppins_light"
             android:gravity="center"
-            android:hint="@string/otp_edit_text_hint" />
+            android:hint="@string/otp_edit_text_hint"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"/>
     </RelativeLayout>
 
     <TextView
@@ -65,7 +71,7 @@
         android:clickable="true"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/resend_otp"
-        android:textColor="@color/purple_700"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline5" />
@@ -94,6 +100,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/enter_otp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
