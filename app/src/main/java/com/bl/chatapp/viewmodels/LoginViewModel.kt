@@ -95,6 +95,4 @@ class LoginViewModel(private val context: Context) : ViewModel() {
     fun logOut(context: Context) {
         firebaseAuth.logOutFromApp(context)
     }
-
-
 }

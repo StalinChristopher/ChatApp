@@ -35,7 +35,7 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
         binding = OtpVerificationFragmentBinding.bind(view)
         loginViewModel = ViewModelProvider(
             requireActivity(),
-            ViewModelFactory(requireContext())
+            ViewModelFactory(LoginViewModel(requireContext()))
         )[LoginViewModel::class.java]
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         phoneNumber = arguments?.get(PHONE_NUMBER) as String
@@ -47,7 +47,6 @@ class OtpVerificationFragment : Fragment(R.layout.otp_verification_fragment) {
         savedInstanceState?.let {
             binding.otpEditText.setText(it.get(OTP) as String)
         }
-
     }
 
     private fun listeners() {

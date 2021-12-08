@@ -10,17 +10,27 @@ import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.data.services.DatabaseLayer
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ChatDetailViewModel : ViewModel() {
+@ExperimentalCoroutinesApi
+class ChatDetailViewModel(private val context: Context, private val currentUser: UserDetails, private val foreignUser: UserDetails) : ViewModel() {
+
+    val messageList = ArrayList<Message>()
 
     private val _sendMessageStatus = MutableLiveData<Boolean>()
     val sendMessageStatus = _sendMessageStatus as LiveData<Boolean>
 
-    private val _getMessageListStatus = MutableLiveData<ArrayList<Message>>()
-    val getMessageListStatus = _getMessageListStatus as LiveData<ArrayList<Message>>
+    private val _getMessageListStatus = MutableLiveData<Boolean>()
+    val getMessageListStatus = _getMessageListStatus as LiveData<Boolean>
+
+    init {
+        getMessages(context, currentUser, foreignUser)
+    }
 
     fun sendNewMessage(
         context: Context, currentUser: UserDetails, foreignUser: UserDetails,
@@ -38,14 +48,16 @@ class ChatDetailViewModel : ViewModel() {
         }
     }
 
-//    fun getMessages(context: Context, currentUser: UserDetails, foreignUser: UserDetails) {
-//        viewModelScope.launch {
-//            val messageList = DatabaseLayer.getInstance(context).getMessageList(currentUser, foreignUser)
-//            if(messageList != null) {
-//                _getMessageListStatus.postValue(messageList)
-//            }
-//        }
-//    }
+    @ExperimentalCoroutinesApi
+    fun getMessages(context: Context, currentUser: UserDetails, foreignUser: UserDetails) {
+        viewModelScope.launch {
+            DatabaseLayer.getInstance(context).getMessageList(currentUser, foreignUser).collect {
+                messageList.clear()
+                messageList.addAll(it as ArrayList<Message>)
+                _getMessageListStatus.postValue(true)
+            }
+        }
+    }
 
     fun createChannel(context: Context, currentUser: UserDetails, foreignUser: UserDetails) {
         viewModelScope.launch {

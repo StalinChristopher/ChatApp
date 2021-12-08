@@ -38,7 +38,10 @@ class HomeActivity : AppCompatActivity() {
         tabLayout = binding.homeScreenTabLayout
         viewPager = binding.homeScreenViewPager
         setSupportActionBar(homeToolbar)
-        loginViewModel = ViewModelProvider(this, ViewModelFactory(this))[LoginViewModel::class.java]
+        loginViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(LoginViewModel(this))
+        )[LoginViewModel::class.java]
         listeners()
         currentUser = intent.getSerializableExtra(USER_DETAILS) as UserDetails
         userViewModel.getUserData(this, currentUser)

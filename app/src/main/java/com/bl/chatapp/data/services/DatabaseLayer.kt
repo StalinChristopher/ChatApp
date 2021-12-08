@@ -7,6 +7,8 @@ import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class DatabaseLayer(private val context: Context) {
@@ -67,16 +69,20 @@ class DatabaseLayer(private val context: Context) {
         }
     }
 
-    suspend fun getUserListFromDb(user: UserDetails) : ArrayList<UserDetails>? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val userList = fireStoreDb.getUserListFromDb(user)
-                userList
-            } catch (e: Exception) {
-                Log.e("DatabaseLayer", "read user list failed")
-                null
-            }
-        }
+//    suspend fun getUserListFromDb(user: UserDetails) : ArrayList<UserDetails>? {
+//        return withContext(Dispatchers.IO) {
+//            try {
+//                val userList = fireStoreDb.getUserListFromDb(user)
+//                userList
+//            } catch (e: Exception) {
+//                Log.e("DatabaseLayer", "read user list failed")
+//                null
+//            }
+//        }
+//    }
+
+    fun getUserListFromDb(user: UserDetails) : Flow<ArrayList<UserDetails>?> {
+        return fireStoreDb.getAllUsersFromDb(user)
     }
 
     suspend fun sendNewMessage(currentUser: UserDetails, foreignUser: UserDetails,
@@ -91,18 +97,6 @@ class DatabaseLayer(private val context: Context) {
             }
         }
     }
-
-//    suspend fun getMessageList(currentUser: UserDetails, foreignUser: UserDetails): ArrayList<Message>? {
-//        return withContext(Dispatchers.IO) {
-//            try {
-//                val messageList = fireStoreDb.getMessages(currentUser, foreignUser)
-//                messageList
-//            } catch (e: Exception) {
-//                Log.e("DatabaseLayer","exception during get  message list")
-//                null
-//            }
-//        }
-//    }
 
     suspend fun getAllChatsOfUser(uid: String) : ArrayList<Chat>? {
         return withContext(Dispatchers.IO) {
@@ -126,5 +120,10 @@ class DatabaseLayer(private val context: Context) {
                 false
             }
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getMessageList(currentUser: UserDetails, foreignUser: UserDetails): Flow<ArrayList<Message>?> {
+        return fireStoreDb.getMessages(currentUser, foreignUser)
     }
 }

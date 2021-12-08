@@ -7,16 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.chatapp.R
-import com.bl.chatapp.data.models.Chat
-import com.bl.chatapp.ui.home.ChatFragment
 import com.bl.chatapp.wrappers.UserDetails
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
-import org.w3c.dom.Text
 
 class ChatUsersAdapter(
     private val userList: ArrayList<UserDetails>,
-    private val chatList: ArrayList<Chat>,
     private val context: Context
 ) :
     RecyclerView.Adapter<ChatUsersAdapter.UserViewHolder>() {
@@ -35,18 +31,11 @@ class ChatUsersAdapter(
         private val messageTextView =
             itemView.findViewById<TextView>(R.id.recycler_item_message_text_view)
 
-        fun setUserInfo(context: Context, user: UserDetails, chatList: ArrayList<Chat>) {
+        fun setUserInfo(context: Context, user: UserDetails) {
             userName.text = user.userName
             if (user.profileImageUrl.isNotBlank()) {
                 Glide.with(context).load(user.profileImageUrl).dontAnimate().into(profileImage)
             }
-            var message = ""
-//            for(item in chatList) {
-//                if(item.participants.contains(user.uid)) {
-//                    message = item.messageList[0].messageText
-//                }
-//            }
-//            messageTextView.text = message
         }
 
         init {
@@ -67,7 +56,7 @@ class ChatUsersAdapter(
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val currentItem = userList[position]
-        holder.setUserInfo(context, currentItem, chatList)
+        holder.setUserInfo(context, currentItem)
     }
 
     override fun getItemCount(): Int {

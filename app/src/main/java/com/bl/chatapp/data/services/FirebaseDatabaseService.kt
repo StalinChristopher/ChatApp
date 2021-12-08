@@ -1,6 +1,5 @@
 package com.bl.chatapp.data.services
 
-import android.content.Context
 import android.util.Log
 import com.bl.chatapp.common.Constants.FIREBASE_CHATS_COLLECTION
 import com.bl.chatapp.common.Constants.FIREBASE_MESSAGES_COLLECTION
@@ -16,7 +15,6 @@ import com.bl.chatapp.common.Constants.PARTICIPANTS
 import com.bl.chatapp.common.Constants.RECEIVER_ID
 import com.bl.chatapp.common.Constants.SENDER_ID
 import com.bl.chatapp.common.Constants.SENT_TIME
-import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.common.Utilities
 import com.bl.chatapp.data.models.Chat
 import com.bl.chatapp.data.models.FirebaseUser
@@ -24,13 +22,14 @@ import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import org.w3c.dom.DocumentType
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseDatabaseService {
@@ -176,22 +175,25 @@ class FirebaseDatabaseService {
         }
     }
 
+    private fun createChatId(currentUserUid : String, foreignUserUid: String) : String {
+        return if(currentUserUid.compareTo(foreignUserUid) > 0) {
+            "${currentUserUid}_${foreignUserUid}"
+        } else {
+            "${foreignUserUid}_${currentUserUid}"
+        }
+    }
+
     suspend fun sendMessage(
         currentUser: UserDetails,
         foreignUser: UserDetails,
         message: MessageWrapper
     ): Boolean {
         return suspendCoroutine { callback ->
-            var chatId = ""
-            if (currentUser.uid.compareTo(foreignUser.uid) > 0) {
-                chatId = "${currentUser.uid}_${foreignUser.uid}"
-            } else {
-                chatId = "${foreignUser.uid}_${currentUser.uid}"
-            }
-            var autoId = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).collection(
+            val chatId = createChatId(currentUser.uid, foreignUser.uid)
+            val autoId = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).collection(
                 FIREBASE_MESSAGES_COLLECTION
             ).document().id
-            var firebaseMessage = Message(
+            val firebaseMessage = Message(
                 messageId = autoId,
                 senderId = currentUser.uid,
                 receiverId = foreignUser.uid,
@@ -218,24 +220,19 @@ class FirebaseDatabaseService {
         foreignUser: UserDetails
     ): Boolean {
         return suspendCoroutine { callback ->
-            var chatId = ""
-            chatId = if (currentUser.uid.compareTo(foreignUser.uid) > 0) {
-                "${currentUser.uid}_${foreignUser.uid}"
-            } else {
-                "${foreignUser.uid}_${currentUser.uid}"
-            }
+            val chatId = createChatId(currentUser.uid, foreignUser.uid)
             db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val snapshot = task.result
                         if (snapshot != null) {
-                            var data = snapshot.data
+                            val data = snapshot.data
                             if (data == null) {
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    var participants = ArrayList<String>()
+                                    val participants = ArrayList<String>()
                                     participants.add(currentUser.uid)
                                     participants.add(foreignUser.uid)
-                                    var map = mapOf(
+                                    val map = mapOf(
                                         PARTICIPANTS to participants
                                     )
                                     db.collection(FIREBASE_CHATS_COLLECTION).document(chatId)
@@ -255,41 +252,6 @@ class FirebaseDatabaseService {
                 }
         }
     }
-
-//    suspend fun getSnapShotMessage(currentUser: UserDetails, foreignUser: UserDetails): ArrayList<Message> {
-//        return suspendCoroutine {  callback ->
-//            var chatId = ""
-//            chatId = if(currentUser.uid.compareTo(foreignUser.uid) > 0) {
-//                "${currentUser.uid}_${foreignUser.uid}"
-//            } else {
-//                "${foreignUser.uid}_${currentUser.uid}"
-//            }
-//            db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).collection("Messages").orderBy(
-//                SENT_TIME, Query.Direction.DESCENDING).addSnapshotListener { value, error ->
-//                if(error is FirebaseFirestoreException) {
-//                    Log.i("FirebaseDatabase","snapshotListener exception")
-//                    callback.resumeWith(Result.failure(error))
-//                }
-//                if(value != null) {
-//                    val documentChanges = value.documentChanges
-//                    val messageList = ArrayList<Message>()
-//                    for( doc in documentChanges ) {
-//                        if(doc.type == DocumentChange.Type.ADDED) {
-//                            var message = Message(
-//                                messageId = doc.document.getString(MESSAGE_ID).toString(),
-//                                senderId = doc.document.getString(SENDER_ID).toString(),
-//                                receiverId = doc.document.getString(RECEIVER_ID).toString(),
-//                                sentTime = doc.document.getLong(SENT_TIME)!!,
-//                                messageText = doc.document.getString(MESSAGE_TEXT).toString(),
-//                                messageType = doc.document.getString(MESSAGE_TYPE).toString())
-//                            messageList.add(message)
-//                        }
-//                    }
-//                    callback.resumeWith(Result.success(messageList))
-//                }
-//            }
-//        }
-//    }
 
     suspend fun getAllChatsFromDb(uid: String): ArrayList<Chat> {
         return suspendCoroutine { callback ->
@@ -341,4 +303,80 @@ class FirebaseDatabaseService {
                 }
         }
 
+    @ExperimentalCoroutinesApi
+    fun getMessages(currentUser: UserDetails, foreignUser: UserDetails) : Flow<ArrayList<Message>?> {
+        return callbackFlow {
+            val messageList = ArrayList<Message>()
+            val chatId = createChatId(currentUser.uid, foreignUser.uid)
+            val listenerRef = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId)
+                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME).addSnapshotListener { snapshot, error ->
+                if(error != null) {
+                    this.offer(null)
+                    Log.e(TAG, "snapshot listener error")
+                    error.printStackTrace()
+                } else {
+                    if(snapshot != null) {
+                        for(doc in snapshot.documentChanges) {
+                            if(doc.type == DocumentChange.Type.ADDED) {
+                                val data = doc.document
+                                val message = Message(
+                                    data[MESSAGE_ID].toString(),
+                                    data[SENDER_ID].toString(),
+                                    data[RECEIVER_ID].toString(),
+                                    data[SENT_TIME] as Long,
+                                    data[MESSAGE_TEXT].toString(),
+                                    data[MESSAGE_TYPE].toString()
+                                )
+                                messageList.add(message)
+                            }
+                        }
+                        this.offer(messageList)
+                    } else {
+                        Log.e(TAG,"snapshot is null error")
+                    }
+                }
+            }
+            awaitClose { listenerRef.remove() }
+        }
+    }
+
+    fun getAllUsersFromDb(user: UserDetails) : Flow<ArrayList<UserDetails>?> {
+        return callbackFlow {
+            val userList = ArrayList<UserDetails>()
+            val listenerRef = db.collection(FIREBASE_USERS_COLLECTION).addSnapshotListener { snapshot, error ->
+                if(error != null) {
+                    this.offer(null)
+                    Log.e(TAG, "snapshot listener error")
+                    error.printStackTrace()
+                } else {
+                    if(snapshot != null) {
+                        for(doc in snapshot.documentChanges) {
+                            if(doc.type == DocumentChange.Type.ADDED) {
+                                val item = doc.document
+                                if(item.id == user.uid) {
+                                    continue
+                                } else {
+                                    val userMap = item.data as HashMap<*, *>
+                                    val userName = userMap[FIREBASE_USERNAME].toString()
+                                    val status = userMap[FIREBASE_STATUS].toString()
+                                    val phone = userMap[FIREBASE_PHONE].toString()
+                                    val profileImageUrl = userMap[FIREBASE_PROFILE_IMAGE_URL].toString()
+                                    val uid = item.id
+                                    val userFromDb = UserDetails(
+                                        userName = userName, status = status, phone = phone,
+                                        profileImageUrl = profileImageUrl, uid = uid
+                                    )
+                                    userList.add(userFromDb)
+                                }
+                            }
+                        }
+                        this.offer(userList)
+                    } else {
+                        Log.e(TAG,"snapshot is null error")
+                    }
+                }
+            }
+            awaitClose { listenerRef.remove() }
+        }
+    }
 }
