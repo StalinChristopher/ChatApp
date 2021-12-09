@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.home.adapters
+package com.bl.chatapp.ui.home.groups.newgroup
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -12,15 +12,17 @@ import com.bl.chatapp.wrappers.UserDetails
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
-class GroupChatUserAdapter(
+class NewGroupUserListAdapter(
     private val userList: ArrayList<UserDetails>,
     private val context: Context
-) : RecyclerView.Adapter<GroupChatUserAdapter.GroupChatUserViewHolder>() {
+) : RecyclerView.Adapter<NewGroupUserListAdapter.GroupChatUserViewHolder>() {
 
-    var selectedUser = mutableListOf<String>()
+    private var selectedUser = mutableListOf<String>()
 
     class GroupChatUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+        val userName: TextView = itemView.findViewById(R.id.recycler_item_userName)
+        val profileImage: CircleImageView = itemView.findViewById(R.id.imageView_recycler_item)
+        val checkBox: CheckBox = itemView.findViewById(R.id.select_user_cb)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupChatUserViewHolder {
@@ -33,10 +35,9 @@ class GroupChatUserAdapter(
     }
 
     override fun onBindViewHolder(holder: GroupChatUserViewHolder, position: Int) {
-        val userName = holder.itemView.findViewById<TextView>(R.id.recycler_item_userName)
-        val profileImage =
-            holder.itemView.findViewById<CircleImageView>(R.id.imageView_recycler_item)
-        val checkBox = holder.itemView.findViewById<CheckBox>(R.id.select_user_cb)
+        val userName = holder.userName
+        val profileImage = holder.profileImage
+        val checkBox = holder.checkBox
 
         checkBox.setOnClickListener {
             if (checkBox.isChecked) {

@@ -8,8 +8,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_recycler_item"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -58,7 +58,7 @@
     <TextView
         android:id="@+id/recycler_item_message_text_view"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="start"
         android:maxLines="1"

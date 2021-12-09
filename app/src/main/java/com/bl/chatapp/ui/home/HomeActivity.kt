@@ -13,7 +13,6 @@ import com.bl.chatapp.common.Constants.USER_DETAILS
 import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.ActivityHomeBinding
 import com.bl.chatapp.ui.authentication.AuthenticationActivity
-import com.bl.chatapp.ui.home.adapters.FragmentAdapter
 import com.bl.chatapp.ui.profilescreen.ProfileActivity
 import com.bl.chatapp.viewmodels.LoginViewModel
 import com.bl.chatapp.viewmodels.UserViewModel
@@ -119,6 +118,7 @@ class HomeActivity : AppCompatActivity() {
     private fun gotoAuthenticationActivity() {
         val intent = Intent(this, AuthenticationActivity::class.java)
         intent.putExtra(SPLASH_SCREEN_VISIBILITY,false)
+        finish()
         startActivity(intent)
     }
 }

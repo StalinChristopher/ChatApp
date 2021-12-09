@@ -10,7 +10,6 @@ import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.VIEW_TYPE_RECEIVE
 import com.bl.chatapp.common.Constants.VIEW_TYPE_SENT
 import com.bl.chatapp.data.models.Message
-import com.bl.chatapp.ui.home.adapters.ChatUsersAdapter
 import com.bl.chatapp.wrappers.UserDetails
 
 class ChatDetailAdapter(

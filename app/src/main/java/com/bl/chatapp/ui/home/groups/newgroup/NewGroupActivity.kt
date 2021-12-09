@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.newgroup
+package com.bl.chatapp.ui.home.groups.newgroup
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,5 +21,16 @@ class NewGroupActivity : AppCompatActivity() {
         userListFragment.arguments = bundle
         supportFragmentManager.beginTransaction()
             .replace(R.id.new_group_fragment_container_id, userListFragment).commit()
+    }
+
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+        if(count == 0) {
+            super.onBackPressed()
+        } else {
+            supportFragmentManager.popBackStack()
+        }
+
+
     }
 }

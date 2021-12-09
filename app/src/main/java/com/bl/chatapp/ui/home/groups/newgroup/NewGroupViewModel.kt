@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.newgroup
+package com.bl.chatapp.ui.home.groups.newgroup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,12 +16,24 @@ class NewGroupViewModel: ViewModel() {
     private val _getUserListStatus = MutableLiveData<Boolean>()
     val getUserListStatus = _getUserListStatus as LiveData<Boolean>
 
+    private val _groupCreatedStatus = MutableLiveData<Boolean>()
+    val groupCreatedStatus = _groupCreatedStatus as LiveData<Boolean>
+
     fun getUserListFromDb(userDetails: UserDetails) {
         viewModelScope.launch {
             databaseLayer.getUserListFromDb(userDetails).collect {
                 userList.clear()
                 userList.addAll(it as ArrayList<UserDetails>)
                 _getUserListStatus.postValue(true)
+            }
+        }
+    }
+
+    fun createGroup(participants: ArrayList<String>, groupName: String) {
+        viewModelScope.launch {
+            val status = DatabaseLayer().createGroup(participants, groupName)
+            if(status) {
+                _groupCreatedStatus.postValue(true)
             }
         }
     }

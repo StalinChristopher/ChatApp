@@ -84,6 +84,7 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:hint="@string/enter_your_group_name_here"
+        android:textColor="@color/white"
         android:textColorHint="@color/whatsapp_edit_text_hint_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/circleImageView2"

@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.home
+package com.bl.chatapp.ui.home.groups
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +9,7 @@ import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.USER_DETAILS
 import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.GroupFragmentBinding
-import com.bl.chatapp.ui.newgroup.NewGroupActivity
+import com.bl.chatapp.ui.home.groups.newgroup.NewGroupActivity
 import com.bl.chatapp.viewmodels.GroupViewModel
 import com.bl.chatapp.viewmodels.UserViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory

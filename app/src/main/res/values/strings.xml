@@ -29,4 +29,5 @@
     <string name="new_group">New Group</string>
     <string name="add_group_name">Add group name</string>
     <string name="enter_your_group_name_here">Enter your group name here</string>
+    <string name="group_name_empty_error">Group name cannot be empty</string>
 </resources>
