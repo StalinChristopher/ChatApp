@@ -46,7 +46,6 @@ class ProfileActivity : AppCompatActivity(){
         observers()
         pleaseWaitDialog = Dialog(this)
         pleaseWaitDialog.setContentView(R.layout.dialog_loading)
-        pleaseWaitDialog.show()
         profileImageButton = binding.profileImageButton
         updateButton = binding.profileOkButton
         listeners()
@@ -148,6 +147,7 @@ class ProfileActivity : AppCompatActivity(){
     }
 
     private fun initializeProfile(user: UserDetails) {
+        pleaseWaitDialog.show()
         if(user.profileImageUrl.isNotEmpty()) {
             Glide.with(this).load(user.profileImageUrl).dontAnimate().into(profileImageButton)
         }

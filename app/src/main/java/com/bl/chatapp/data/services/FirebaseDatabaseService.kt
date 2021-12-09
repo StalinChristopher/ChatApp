@@ -18,6 +18,7 @@ import com.bl.chatapp.common.Constants.SENT_TIME
 import com.bl.chatapp.common.Utilities
 import com.bl.chatapp.data.models.Chat
 import com.bl.chatapp.data.models.FirebaseUser
+import com.bl.chatapp.data.models.GroupInfo
 import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
@@ -371,6 +372,57 @@ class FirebaseDatabaseService {
                             }
                         }
                         this.offer(userList)
+                    } else {
+                        Log.e(TAG,"snapshot is null error")
+                    }
+                }
+            }
+            awaitClose { listenerRef.remove() }
+        }
+    }
+
+    suspend fun createGroupChannel(participants: ArrayList<String>, groupName: String) : Boolean {
+        return suspendCoroutine { callback ->
+//            var groupInfo = GroupInfo(groupName, participants)
+//            var autoId = db.collection("groupChat").document().id
+//            db.collection("groupChat").document(autoId).set(groupInfo)
+            val map = mapOf(
+                "groupName" to groupName,
+                "participants" to participants
+            )
+            db.collection("groupChat").add(map).addOnCompleteListener {
+                if(it.isSuccessful) {
+                    Log.i(TAG, "create group successful")
+                    callback.resumeWith(Result.success(true))
+                } else {
+                    Log.i(TAG, "Create group failed")
+                    callback.resumeWith(Result.failure(it.exception!!))
+                }
+            }
+        }
+    }
+
+    fun getAllGroupsOfUser(currentUser: UserDetails) : Flow<ArrayList<GroupInfo>?> {
+        return callbackFlow {
+            val groupList = ArrayList<GroupInfo>()
+            val listenerRef = db.collection("groupChat").whereArrayContains(PARTICIPANTS, currentUser.uid).addSnapshotListener { snapshot, error ->
+                if(error != null) {
+                    this.offer(null)
+                    Log.e(TAG,"snapshot listener error")
+                } else {
+                    if(snapshot != null) {
+                        for (doc in snapshot.documentChanges) {
+                            if(doc.type == DocumentChange.Type.ADDED) {
+                                val item = doc.document
+                                val groupMap = item.data as HashMap<*, *>
+                                val groupId = item.id
+                                val participants = groupMap[PARTICIPANTS] as ArrayList<String>
+                                val groupName = groupMap["groupName"].toString()
+                                val groupInfo = GroupInfo(groupId, groupName, participants)
+                                groupList.add(groupInfo)
+                            }
+                        }
+                        this.offer(groupList)
                     } else {
                         Log.e(TAG,"snapshot is null error")
                     }

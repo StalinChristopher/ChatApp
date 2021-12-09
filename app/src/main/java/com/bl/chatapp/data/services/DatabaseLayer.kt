@@ -3,6 +3,7 @@ package com.bl.chatapp.data.services
 import android.content.Context
 import android.util.Log
 import com.bl.chatapp.data.models.Chat
+import com.bl.chatapp.data.models.GroupInfo
 import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
@@ -125,5 +126,22 @@ class DatabaseLayer() {
     @ExperimentalCoroutinesApi
     fun getMessageList(currentUser: UserDetails, foreignUser: UserDetails): Flow<ArrayList<Message>?> {
         return fireStoreDb.getMessages(currentUser, foreignUser)
+    }
+
+    fun getAllGroupsOfUser(currentUser: UserDetails): Flow<ArrayList<GroupInfo>?> {
+        return fireStoreDb.getAllGroupsOfUser(currentUser)
+    }
+
+    suspend fun createGroup(participants: ArrayList<String>, groupName: String) : Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val result = fireStoreDb.createGroupChannel(participants, groupName)
+                result
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("DatabaseLayer", "create group exception")
+                false
+            }
+        }
     }
 }
