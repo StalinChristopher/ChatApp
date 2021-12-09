@@ -3,7 +3,6 @@ package com.bl.chatapp.ui.home.chats
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,8 @@ import com.bl.chatapp.common.Constants.CURRENT_USER
 import com.bl.chatapp.common.Constants.FOREIGN_USER
 import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.ChatFragmentBinding
-import com.bl.chatapp.ui.chatdetails.ChatDetailsActivity
+import com.bl.chatapp.ui.home.chats.chatdetails.ChatDetailsActivity
+import com.bl.chatapp.ui.home.OnItemClickListener
 import com.bl.chatapp.viewmodels.ChatViewModel
 import com.bl.chatapp.viewmodels.UserViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory
@@ -46,9 +46,8 @@ class ChatFragment : Fragment(R.layout.chat_fragment) {
     }
 
     private fun listeners() {
-        usersAdapter.setOnItemClickListener(object : ChatOnItemClickListener {
+        usersAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(position: Int) {
-                Toast.makeText(requireContext(), "item clicked", Toast.LENGTH_SHORT).show()
                 var foreignUser = chatViewModel.userList[position]
                 gotoChatDetailsScreen(currentUser, foreignUser)
             }

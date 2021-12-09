@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.chatdetails
+package com.bl.chatapp.ui.home.chats.chatdetails
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

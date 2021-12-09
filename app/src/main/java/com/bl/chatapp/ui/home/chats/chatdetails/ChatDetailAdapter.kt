@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.chatdetails
+package com.bl.chatapp.ui.home.chats.chatdetails
 
 import android.content.Context
 import android.view.LayoutInflater

@@ -18,7 +18,7 @@
             android:name=".ui.home.groups.newgroup.NewGroupActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.chatdetails.ChatDetailsActivity"
+            android:name="com.bl.chatapp.ui.home.chats.chatdetails.ChatDetailsActivity"
             android:exported="true" />
         <activity
             android:name=".ui.authentication.AuthenticationActivity"

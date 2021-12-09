@@ -20,8 +20,8 @@ class NewGroupUserListAdapter(
     private var selectedUser = mutableListOf<String>()
 
     class GroupChatUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val userName: TextView = itemView.findViewById(R.id.recycler_item_userName)
-        val profileImage: CircleImageView = itemView.findViewById(R.id.imageView_recycler_item)
+        val userName: TextView = itemView.findViewById(R.id.select_group_participants_recycler_item_userName)
+        val profileImage: CircleImageView = itemView.findViewById(R.id.select_group_participants_imageView_recycler_item)
         val checkBox: CheckBox = itemView.findViewById(R.id.select_user_cb)
     }
 
