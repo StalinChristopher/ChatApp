@@ -8,9 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.USER_DETAILS
+import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.NewUserFragmentBinding
 import com.bl.chatapp.ui.home.HomeActivity
-import com.bl.chatapp.viewmodels.UserViewModel
+import com.bl.chatapp.viewmodels.SharedViewModel
 import com.bl.chatapp.wrappers.UserDetails
 import com.google.android.material.textfield.TextInputEditText
 
@@ -20,11 +21,11 @@ class NewUserInfoFragment : Fragment(R.layout.new_user_fragment){
     private lateinit var statusEditText: TextInputEditText
     private lateinit var sendButton: Button
     private lateinit var userDetails: UserDetails
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = NewUserFragmentBinding.bind(view)
-        userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
+        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         userNameEditText = binding.signupUsername
         statusEditText = binding.newUserStatus
         sendButton = binding.newUserOkButton
@@ -35,8 +36,9 @@ class NewUserInfoFragment : Fragment(R.layout.new_user_fragment){
     }
 
     private fun observers() {
-        userViewModel.newUserAddStatus.observe(viewLifecycleOwner) {
+        sharedViewModel.newUserAddStatus.observe(viewLifecycleOwner) {
             if(it != null) {
+                SharedPref.getInstance(requireContext()).addUserId(it.uid)
                 gotoHomeActivity(it)
             }
         }
@@ -57,7 +59,7 @@ class NewUserInfoFragment : Fragment(R.layout.new_user_fragment){
                 userNameEditText.error = getString(R.string.please_enter_username)
                 statusEditText.error = getString(R.string.please_enter_current_status)
             } else {
-                userViewModel.setUserData(requireContext(), userName, statusText, userDetails)
+                sharedViewModel.setUserData(userName, statusText, userDetails)
             }
         }
     }

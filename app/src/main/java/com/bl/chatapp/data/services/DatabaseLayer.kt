@@ -3,6 +3,7 @@ package com.bl.chatapp.data.services
 import android.content.Context
 import android.util.Log
 import com.bl.chatapp.data.models.Chat
+import com.bl.chatapp.data.models.GroupInfo
 import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
@@ -11,13 +12,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
-class DatabaseLayer(private val context: Context) {
+class DatabaseLayer() {
     private var fireStoreDb: FirebaseDatabaseService = FirebaseDatabaseService()
 
-    companion object {
-        private val instance: DatabaseLayer? by lazy { null }
-        fun getInstance(context: Context): DatabaseLayer = instance ?: DatabaseLayer(context)
-    }
+//    companion object {
+//        private val instance: DatabaseLayer? by lazy { null }
+//        fun getInstance(context: Context): DatabaseLayer = instance ?: DatabaseLayer(context)
+//    }
 
     suspend fun addUserInfoToDatabase(userDetails: UserDetails): UserDetails? {
         return withContext(Dispatchers.IO) {
@@ -69,18 +70,6 @@ class DatabaseLayer(private val context: Context) {
         }
     }
 
-//    suspend fun getUserListFromDb(user: UserDetails) : ArrayList<UserDetails>? {
-//        return withContext(Dispatchers.IO) {
-//            try {
-//                val userList = fireStoreDb.getUserListFromDb(user)
-//                userList
-//            } catch (e: Exception) {
-//                Log.e("DatabaseLayer", "read user list failed")
-//                null
-//            }
-//        }
-//    }
-
     fun getUserListFromDb(user: UserDetails) : Flow<ArrayList<UserDetails>?> {
         return fireStoreDb.getAllUsersFromDb(user)
     }
@@ -125,5 +114,54 @@ class DatabaseLayer(private val context: Context) {
     @ExperimentalCoroutinesApi
     fun getMessageList(currentUser: UserDetails, foreignUser: UserDetails): Flow<ArrayList<Message>?> {
         return fireStoreDb.getMessages(currentUser, foreignUser)
+    }
+
+    fun getAllGroupsOfUser(currentUser: UserDetails): Flow<ArrayList<GroupInfo>?> {
+        return fireStoreDb.getAllGroupsOfUser(currentUser)
+    }
+
+    suspend fun createGroup(participants: ArrayList<String>, groupName: String) : Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val result = fireStoreDb.createGroupChannel(participants, groupName)
+                result
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("DatabaseLayer", "create group exception")
+                false
+            }
+        }
+    }
+
+    suspend fun sendNewMessageToGroup(currentUser: UserDetails, selectedGroup: GroupInfo, messageWrapper: MessageWrapper): Boolean {
+        return  withContext(Dispatchers.IO) {
+            try {
+                val resultStatus = fireStoreDb.sendNewMessageToGroup(currentUser, selectedGroup, messageWrapper)
+                resultStatus
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
+    fun getMessageListOfGroup(group: GroupInfo): Flow<ArrayList<Message>?> {
+        return fireStoreDb.getAllMessagesOfGroup(group)
+    }
+
+    suspend fun getUsersInfoFromParticipants(userIdList: ArrayList<String>) : ArrayList<UserDetails> {
+        return withContext(Dispatchers.IO) {
+            val userList = ArrayList<UserDetails>()
+            for(id in userIdList) {
+                try {
+                    val user = fireStoreDb.getUserInfoFromId(id)
+                    userList.add(user)
+                } catch(e: Exception) {
+                    Log.e("DatabaseLayer", "error while fetching user")
+                    e.printStackTrace()
+                }
+            }
+            userList
+        }
     }
 }

@@ -1,11 +1,11 @@
-package com.bl.chatapp.ui.home.adapters
+package com.bl.chatapp.ui.home
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.bl.chatapp.ui.home.ChatFragment
-import com.bl.chatapp.ui.home.GroupsFragment
+import com.bl.chatapp.ui.home.chats.ChatFragment
+import com.bl.chatapp.ui.home.groups.GroupsFragment
 
 class FragmentAdapter(fragmentManager: FragmentManager, lifeCycle: Lifecycle) :
     FragmentStateAdapter(

@@ -1,20 +1,20 @@
 package com.bl.chatapp.viewmodels
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.data.services.DatabaseLayer
 import com.bl.chatapp.data.services.FirebaseStorage
 import com.bl.chatapp.wrappers.UserDetails
-import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.launch
 
-class UserViewModel : ViewModel() {
+class SharedViewModel : ViewModel() {
+    private val databaseLayer = DatabaseLayer()
+    private val firebaseStorage = FirebaseStorage()
+
     private val _newUserAddStatus = MutableLiveData<UserDetails>()
     val newUserAddStatus = _newUserAddStatus as LiveData<UserDetails>
 
@@ -30,43 +30,40 @@ class UserViewModel : ViewModel() {
     private val _userInfoFromIdStatus = MutableLiveData<UserDetails>()
     val userInfoFromIdStatus = _userInfoFromIdStatus as LiveData<UserDetails>
 
-    fun setUserData(context: Context, userName: String,
+    fun setUserData(userName: String,
                     statusText: String, userDetails: UserDetails) {
         viewModelScope.launch {
             userDetails.userName = userName
             userDetails.status = statusText
-            val user = DatabaseLayer.getInstance(context).addUserInfoToDatabase(userDetails)
+            val user = databaseLayer.addUserInfoToDatabase(userDetails)
             if(user != null) {
-                SharedPref.getInstance(context).addUserId(userDetails.uid)
                 _newUserAddStatus.postValue(user)
             }
         }
     }
 
-    fun getUserData(context: Context, userDetails: UserDetails) {
+    fun getUserData(userDetails: UserDetails) {
         viewModelScope.launch {
-            val user = DatabaseLayer.getInstance(context).getUserInfoFromDatabase(userDetails)
+            val user = databaseLayer.getUserInfoFromDatabase(userDetails)
             if(user != null) {
-                SharedPref.getInstance(context).addUserId(userDetails.uid)
                 _getUserInfoStatus.postValue(user)
             }
         }
     }
 
-    fun getUserInfoFromId(context: Context) {
+    fun getUserInfoFromId(uid: String) {
         viewModelScope.launch {
-            val uid = SharedPref.getInstance(context).getUserId()
-            val user = DatabaseLayer.getInstance(context).getUserDataFromId(uid)
+            val user = databaseLayer.getUserDataFromId(uid)
             if(user != null) {
                 _userInfoFromIdStatus.postValue(user)
             }
         }
     }
 
-    fun setProfileImage(context: Context, uri: Uri, userDetails: UserDetails){
+    fun setProfileImage(uri: Uri, userDetails: UserDetails){
         viewModelScope.launch {
             try {
-                val resultUri = FirebaseStorage.getInstance(context).setProfileImage(uri, userDetails)
+                val resultUri = firebaseStorage.setProfileImage(uri, userDetails)
                 _setUserProfileImageStatus.postValue(resultUri)
             } catch (e: Exception) {
                 Log.i("UserViewModel","firebase storage set profile image exception")
@@ -77,9 +74,9 @@ class UserViewModel : ViewModel() {
         }
     }
 
-    fun updateUserProfileDetails(context: Context, userDetails: UserDetails) {
+    fun updateUserProfileDetails(userDetails: UserDetails) {
         viewModelScope.launch {
-            val result = DatabaseLayer.getInstance(context).updateProfileDetails(userDetails)
+            val result = databaseLayer.updateProfileDetails(userDetails)
             _updateUserStatusStatus.postValue(result)
         }
     }

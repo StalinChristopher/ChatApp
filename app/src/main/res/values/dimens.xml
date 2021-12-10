@@ -4,7 +4,7 @@
     <dimen name="chat_detail_message_edit_text_margin_start">13dp</dimen>
     <dimen name="chat_detail_message_edit_text">8dp</dimen>
     <dimen name="chat_detail_message_edit_text_margin_bottom">8dp</dimen>
-    <dimen name="padding_top_recycler_item_text_view">32dp</dimen>
-    <dimen name="textsize_recycler_item_text_view">16sp</dimen>
+    <dimen name="padding_top_recycler_item_text_view">24dp</dimen>
+    <dimen name="textsize_recycler_item_text_view">18sp</dimen>
     <dimen name="chat_detail_recycler_sent_item_padding">4dp</dimen>
 </resources>

@@ -15,7 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
         <activity
-            android:name=".ui.chatdetails.ChatDetailsActivity"
+            android:name=".ui.home.groups.groupdetails.GroupChatDetailsActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.home.groups.newgroup.NewGroupActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.bl.chatapp.ui.home.chats.chatdetails.ChatDetailsActivity"
             android:exported="true" />
         <activity
             android:name=".ui.authentication.AuthenticationActivity"

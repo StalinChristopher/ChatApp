@@ -10,14 +10,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseStorage(private val context: Context) {
+class FirebaseStorage() {
     private var storageRef = Firebase.storage.reference
-
-    companion object {
-        private val instance: FirebaseStorage? by lazy { null }
-        fun getInstance(context: Context): FirebaseStorage = instance ?: FirebaseStorage(context)
-    }
-
+    
     suspend fun setProfileImage(uri: Uri, userDetails: UserDetails): Uri {
         return suspendCoroutine { callback ->
             var urlImage: String

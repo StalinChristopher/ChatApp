@@ -1,4 +1,4 @@
-package com.bl.chatapp.ui.home.adapters
+package com.bl.chatapp.ui.home.chats
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.chatapp.R
+import com.bl.chatapp.ui.home.OnItemClickListener
 import com.bl.chatapp.wrappers.UserDetails
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
@@ -17,13 +18,13 @@ class ChatUsersAdapter(
 ) :
     RecyclerView.Adapter<ChatUsersAdapter.UserViewHolder>() {
 
-    private lateinit var chatItemListener: ChatOnItemClickListener
+    private lateinit var chatItemListener: OnItemClickListener
 
-    fun setOnItemClickListener(listener: ChatOnItemClickListener) {
+    fun setOnItemClickListener(listener: OnItemClickListener) {
         chatItemListener = listener
     }
 
-    class UserViewHolder(itemView: View, listener: ChatOnItemClickListener) :
+    class UserViewHolder(itemView: View, listener: OnItemClickListener) :
         RecyclerView.ViewHolder(itemView) {
         private val userName = itemView.findViewById<TextView>(R.id.recycler_item_userName)
         private val profileImage =

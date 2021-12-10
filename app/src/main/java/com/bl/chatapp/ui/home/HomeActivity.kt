@@ -10,12 +10,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.SPLASH_SCREEN_VISIBILITY
 import com.bl.chatapp.common.Constants.USER_DETAILS
+import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.ActivityHomeBinding
 import com.bl.chatapp.ui.authentication.AuthenticationActivity
-import com.bl.chatapp.ui.home.adapters.FragmentAdapter
 import com.bl.chatapp.ui.profilescreen.ProfileActivity
-import com.bl.chatapp.viewmodels.LoginViewModel
-import com.bl.chatapp.viewmodels.UserViewModel
+import com.bl.chatapp.ui.authentication.LoginViewModel
+import com.bl.chatapp.viewmodels.SharedViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory
 import com.bl.chatapp.wrappers.UserDetails
 import com.google.android.material.tabs.TabLayout
@@ -25,7 +25,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var homeToolbar : androidx.appcompat.widget.Toolbar
     private lateinit var currentUser : UserDetails
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
     private lateinit var fragmentAdapter: FragmentAdapter
@@ -33,25 +33,26 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         homeToolbar = binding.homeToolbar
         tabLayout = binding.homeScreenTabLayout
         viewPager = binding.homeScreenViewPager
         setSupportActionBar(homeToolbar)
         loginViewModel = ViewModelProvider(
             this,
-            ViewModelFactory(LoginViewModel(this))
+            ViewModelFactory(LoginViewModel())
         )[LoginViewModel::class.java]
         listeners()
         currentUser = intent.getSerializableExtra(USER_DETAILS) as UserDetails
-        userViewModel.getUserData(this, currentUser)
+        sharedViewModel.getUserData(currentUser)
         initializeTabLayout()
         observers()
     }
 
     private fun observers() {
-        userViewModel.getUserInfoStatus.observe(this, {
+        sharedViewModel.getUserInfoStatus.observe(this, {
             if(it != null) {
+                SharedPref.getInstance(this).addUserId(it.uid)
                 currentUser = it
             }
         })
@@ -100,7 +101,8 @@ class HomeActivity : AppCompatActivity() {
         when (itemView) {
             R.id.profile_menu_item -> gotoProfileScreen()
             R.id.logout_menu_item -> {
-                loginViewModel.logOut(this)
+                SharedPref.getInstance(this).clearAll()
+                loginViewModel.logOut()
                 gotoAuthenticationActivity()
             }
         }
@@ -116,6 +118,7 @@ class HomeActivity : AppCompatActivity() {
     private fun gotoAuthenticationActivity() {
         val intent = Intent(this, AuthenticationActivity::class.java)
         intent.putExtra(SPLASH_SCREEN_VISIBILITY,false)
+        finish()
         startActivity(intent)
     }
 }

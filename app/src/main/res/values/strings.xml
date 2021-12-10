@@ -26,4 +26,11 @@
     <string name="groups">Groups</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="enter_otp">Enter OTP</string>
+    <string name="new_group">New Group</string>
+    <string name="add_group_name">Add group name</string>
+    <string name="enter_your_group_name_here">Enter your group name here</string>
+    <string name="group_name_empty_error">Group name cannot be empty</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="john_doe">John Doe</string>
+    <string name="tap_here_for_the_group_info">Tap here for the group info</string>
 </resources>

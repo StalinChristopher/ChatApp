@@ -1,7 +1,6 @@
 package com.bl.chatapp.authservice
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
 import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.wrappers.UserDetails
@@ -120,8 +119,7 @@ class FirebaseAuthentication {
         }
     }
 
-    fun logOutFromApp(context: Context) {
-        SharedPref.getInstance(context).clearAll()
+    fun logOutFromApp() {
         firebaseAuth.signOut()
     }
 

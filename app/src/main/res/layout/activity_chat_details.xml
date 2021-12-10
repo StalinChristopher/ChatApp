@@ -5,49 +5,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/whatsapp_background"
-    tools:context=".ui.chatdetails.ChatDetailsActivity">
+    tools:context=".ui.home.chats.chatdetails.ChatDetailsActivity">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/relative_layout_chat_detail_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/chat_detail_recyclerView"
         android:background="@color/whatsapp_toolbar_color">
 
         <ImageButton
             android:id="@+id/backButton_chat_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="6dp"
             android:background="@null"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginBottom="16.59dp"
+            android:padding="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/back_button" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/chat_detail_profile_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginStart="16.59dp"
-            android:src="@drawable/user"
-            android:layout_toEndOf="@id/backButton_chat_detail"/>
+            android:layout_toEndOf="@id/backButton_chat_detail"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/backButton_chat_detail"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/whatsapp_user" />
 
         <TextView
             android:id="@+id/chat_detail_receiver_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/chat_detail_profile_image"
             android:gravity="center"
-            android:text="John Doe"
-            android:textSize="21sp" />
-    </RelativeLayout>
+            android:text="@string/john_doe"
+            android:textSize="21sp"
+            app:layout_constraintStart_toEndOf="@id/chat_detail_profile_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/chat_detail_group_members_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="32dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/chat_detail_profile_image"
+            app:layout_constraintTop_toBottomOf="@id/chat_detail_receiver_textView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_detail_recyclerView"
@@ -78,6 +103,8 @@
             android:layout_marginStart="@dimen/chat_detail_message_edit_text_margin_start"
             android:layout_marginTop="@dimen/chat_detail_message_edit_text"
             android:layout_marginBottom="@dimen/chat_detail_message_edit_text_margin_bottom"
+            android:hint="@string/type_a_message"
+            android:textColorHint="@color/whatsapp_edit_text_hint_color"
             android:layout_toStartOf="@id/chat_detail_camera_icon"
             android:background="@null"
             android:textColor="@color/white" />
