@@ -1,4 +1,4 @@
-package com.bl.chatapp.viewmodels
+package com.bl.chatapp.ui.home.chats
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -14,14 +14,13 @@ import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.databinding.ChatFragmentBinding
 import com.bl.chatapp.ui.home.chats.chatdetails.ChatDetailsActivity
 import com.bl.chatapp.ui.home.OnItemClickListener
-import com.bl.chatapp.viewmodels.ChatViewModel
-import com.bl.chatapp.viewmodels.UserViewModel
+import com.bl.chatapp.viewmodels.SharedViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory
 import com.bl.chatapp.wrappers.UserDetails
 
 class ChatFragment : Fragment(R.layout.chat_fragment) {
     private lateinit var binding: ChatFragmentBinding
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var chatViewModel: ChatViewModel
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var usersAdapter: ChatUsersAdapter
@@ -30,7 +29,7 @@ class ChatFragment : Fragment(R.layout.chat_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = ChatFragmentBinding.bind(view)
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         chatViewModel = ViewModelProvider(
             this,
             ViewModelFactory(ChatViewModel())
@@ -39,7 +38,7 @@ class ChatFragment : Fragment(R.layout.chat_fragment) {
         currentUser =
             UserDetails(uid = uid, userName = "", status = "", phone = "", profileImageUrl = "")
         val userId = SharedPref.getInstance(requireContext()).getUserId()
-        userViewModel.getUserInfoFromId(userId)
+        sharedViewModel.getUserInfoFromId(userId)
         initializeRecyclerView()
         observers()
         listeners()
@@ -64,7 +63,7 @@ class ChatFragment : Fragment(R.layout.chat_fragment) {
     }
 
     private fun observers() {
-        userViewModel.userInfoFromIdStatus.observe(viewLifecycleOwner, {
+        sharedViewModel.userInfoFromIdStatus.observe(viewLifecycleOwner, {
             currentUser = it
         })
 

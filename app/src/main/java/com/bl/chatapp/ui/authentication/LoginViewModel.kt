@@ -1,4 +1,4 @@
-package com.bl.chatapp.viewmodels
+package com.bl.chatapp.ui.authentication
 
 import android.app.Activity
 import android.util.Log

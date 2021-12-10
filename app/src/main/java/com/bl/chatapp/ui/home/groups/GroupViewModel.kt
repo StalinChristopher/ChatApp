@@ -1,4 +1,4 @@
-package com.bl.chatapp.viewmodels
+package com.bl.chatapp.ui.home.groups
 
 import android.util.Log
 import androidx.lifecycle.LiveData

@@ -6,14 +6,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.IMAGE_FROM_GALLERY_CODE
@@ -23,24 +19,23 @@ import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.common.Validator
 import com.bl.chatapp.databinding.ActivityProfilescreenBinding
 import com.bl.chatapp.ui.home.HomeActivity
-import com.bl.chatapp.viewmodels.UserViewModel
+import com.bl.chatapp.viewmodels.SharedViewModel
 import com.bl.chatapp.wrappers.UserDetails
 import com.bumptech.glide.Glide
-import com.google.firebase.firestore.auth.User
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ProfileActivity : AppCompatActivity(){
     private lateinit var binding: ActivityProfilescreenBinding
     private lateinit var currentUser: UserDetails
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var profileImageButton: CircleImageView
     private lateinit var updateButton: Button
     private lateinit var pleaseWaitDialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         val userId = SharedPref.getInstance(this).getUserId()
-        userViewModel.getUserInfoFromId(userId)
+        sharedViewModel.getUserInfoFromId(userId)
         binding = ActivityProfilescreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observers()
@@ -75,7 +70,7 @@ class ProfileActivity : AppCompatActivity(){
                     status = latestStatus, phone = currentUser.phone,
                     profileImageUrl = currentUser.profileImageUrl )
                 currentUser = updateUser
-                userViewModel.updateUserProfileDetails(updateUser)
+                sharedViewModel.updateUserProfileDetails(updateUser)
             }
 
         }
@@ -109,12 +104,12 @@ class ProfileActivity : AppCompatActivity(){
             var imageUri = data.data
             pleaseWaitDialog.show()
             profileImageButton.setImageURI(imageUri)
-            userViewModel.setProfileImage(imageUri!!, currentUser)
+            sharedViewModel.setProfileImage(imageUri!!, currentUser)
         }
     }
 
     private fun observers() {
-        userViewModel.getUserInfoStatus.observe(this, {
+        sharedViewModel.getUserInfoStatus.observe(this, {
             if(it != null) {
                 SharedPref.getInstance(this).addUserId(it.uid)
                 currentUser = it
@@ -122,7 +117,7 @@ class ProfileActivity : AppCompatActivity(){
             }
         })
 
-        userViewModel.setUserProfileImageStatus.observe(this, {
+        sharedViewModel.setUserProfileImageStatus.observe(this, {
             if(it != null) {
                 pleaseWaitDialog.hide()
                 val url = it.toString()
@@ -130,7 +125,7 @@ class ProfileActivity : AppCompatActivity(){
             }
         })
 
-        userViewModel.updateUserInfoStatus.observe(this, {
+        sharedViewModel.updateUserInfoStatus.observe(this, {
             if(it) {
                 pleaseWaitDialog.hide()
                 gotoHomeActivity()
@@ -138,7 +133,7 @@ class ProfileActivity : AppCompatActivity(){
             }
         })
 
-        userViewModel.userInfoFromIdStatus.observe(this, {
+        sharedViewModel.userInfoFromIdStatus.observe(this, {
             if(it != null) {
                 currentUser = it
                 initializeProfile(it)

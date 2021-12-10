@@ -11,7 +11,7 @@ import com.bl.chatapp.data.services.FirebaseStorage
 import com.bl.chatapp.wrappers.UserDetails
 import kotlinx.coroutines.launch
 
-class UserViewModel : ViewModel() {
+class SharedViewModel : ViewModel() {
     private val databaseLayer = DatabaseLayer()
     private val firebaseStorage = FirebaseStorage()
 

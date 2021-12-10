@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.PHONE_NUMBER
 import com.bl.chatapp.databinding.LoginFragmentBinding
-import com.bl.chatapp.viewmodels.LoginViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory
 
 class LoginScreenFragment : Fragment(R.layout.login_fragment) {
