@@ -50,6 +50,12 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
                 newGroupViewModel.createGroup(participantsList, groupName)
             }
         }
+
+        binding.groupNameBackButton.setOnClickListener {
+            activity?.run {
+                supportFragmentManager.popBackStack()
+            }
+        }
     }
 
 }

@@ -9,12 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.chatapp.R
+import com.bl.chatapp.common.Constants.SELECTED_GROUP
 import com.bl.chatapp.common.Constants.USER_DETAILS
 import com.bl.chatapp.common.SharedPref
 import com.bl.chatapp.data.models.GroupInfo
 import com.bl.chatapp.databinding.GroupFragmentBinding
 import com.bl.chatapp.ui.home.OnItemClickListener
 import com.bl.chatapp.ui.home.chats.ChatUsersAdapter
+import com.bl.chatapp.ui.home.groups.groupdetails.GroupChatDetailsActivity
 import com.bl.chatapp.ui.home.groups.newgroup.NewGroupActivity
 import com.bl.chatapp.viewmodels.GroupViewModel
 import com.bl.chatapp.viewmodels.UserViewModel
@@ -77,7 +79,10 @@ class GroupsFragment : Fragment(R.layout.group_fragment) {
     }
 
     private fun gotoGroupChatDetailsScreen(selectedGroup: GroupInfo, currentUser: UserDetails) {
-        Toast.makeText(requireContext(),"Item clicked", Toast.LENGTH_SHORT).show()
+        val intent = Intent(requireActivity(),GroupChatDetailsActivity::class.java)
+        intent.putExtra(SELECTED_GROUP,selectedGroup)
+        intent.putExtra(USER_DETAILS, currentUser)
+        startActivity(intent)
     }
 
     private fun gotoCreateGroupActivity(currentUser: UserDetails) {

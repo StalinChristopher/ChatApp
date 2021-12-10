@@ -2,6 +2,7 @@ package com.bl.chatapp.data.services
 
 import android.util.Log
 import com.bl.chatapp.common.Constants.FIREBASE_CHATS_COLLECTION
+import com.bl.chatapp.common.Constants.FIREBASE_GROUP_CHATS_COLLECTION
 import com.bl.chatapp.common.Constants.FIREBASE_MESSAGES_COLLECTION
 import com.bl.chatapp.common.Constants.FIREBASE_PHONE
 import com.bl.chatapp.common.Constants.FIREBASE_PROFILE_IMAGE_URL
@@ -383,14 +384,11 @@ class FirebaseDatabaseService {
 
     suspend fun createGroupChannel(participants: ArrayList<String>, groupName: String) : Boolean {
         return suspendCoroutine { callback ->
-//            var groupInfo = GroupInfo(groupName, participants)
-//            var autoId = db.collection("groupChat").document().id
-//            db.collection("groupChat").document(autoId).set(groupInfo)
             val map = mapOf(
                 "groupName" to groupName,
                 "participants" to participants
             )
-            db.collection("groupChat").add(map).addOnCompleteListener {
+            db.collection(FIREBASE_GROUP_CHATS_COLLECTION).add(map).addOnCompleteListener {
                 if(it.isSuccessful) {
                     Log.i(TAG, "create group successful")
                     callback.resumeWith(Result.success(true))
@@ -405,7 +403,8 @@ class FirebaseDatabaseService {
     fun getAllGroupsOfUser(currentUser: UserDetails) : Flow<ArrayList<GroupInfo>?> {
         return callbackFlow {
             val groupList = ArrayList<GroupInfo>()
-            val listenerRef = db.collection("groupChat").whereArrayContains(PARTICIPANTS, currentUser.uid).addSnapshotListener { snapshot, error ->
+            val listenerRef = db.collection(FIREBASE_GROUP_CHATS_COLLECTION).
+            whereArrayContains(PARTICIPANTS, currentUser.uid).addSnapshotListener { snapshot, error ->
                 if(error != null) {
                     this.offer(null)
                     Log.e(TAG,"snapshot listener error")
@@ -428,6 +427,70 @@ class FirebaseDatabaseService {
                     }
                 }
             }
+            awaitClose { listenerRef.remove() }
+        }
+    }
+
+    suspend fun sendNewMessageToGroup(currentUser: UserDetails, selectedGroup: GroupInfo,
+                                      messageWrapper: MessageWrapper): Boolean {
+        return suspendCoroutine { callback ->
+            val autoId = db.collection(FIREBASE_GROUP_CHATS_COLLECTION)
+                .document(selectedGroup.groupId).collection(
+                FIREBASE_MESSAGES_COLLECTION
+            ).document().id
+            val firebaseMessage = Message(
+                messageId = autoId,
+                senderId = currentUser.uid,
+                receiverId = "",
+                sentTime = messageWrapper.messageTime,
+                messageText = messageWrapper.content,
+                messageType = messageWrapper.type
+            )
+            db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document(selectedGroup.groupId).collection(
+                FIREBASE_MESSAGES_COLLECTION
+            ).document(autoId).set(firebaseMessage).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i(TAG, "Group Message added successfully")
+                    callback.resumeWith(Result.success(true))
+                } else {
+                    Log.i(TAG, "Group Message add failed")
+                    callback.resumeWith(Result.failure(it.exception!!))
+                }
+            }
+        }
+    }
+
+    fun getAllMessagesOfGroup(group: GroupInfo): Flow<ArrayList<Message>?> {
+        return callbackFlow {
+            val messageList = ArrayList<Message>()
+            val listenerRef = db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document(group.groupId)
+                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME).addSnapshotListener { snapshot, error ->
+                    if(error != null) {
+                        this.offer(null)
+                        Log.e(TAG, "snapshot listener error")
+                        error.printStackTrace()
+                    } else {
+                        if(snapshot != null) {
+                            for(doc in snapshot.documentChanges) {
+                                if(doc.type == DocumentChange.Type.ADDED) {
+                                    val data = doc.document
+                                    val message = Message(
+                                        data[MESSAGE_ID].toString(),
+                                        data[SENDER_ID].toString(),
+                                        data[RECEIVER_ID].toString(),
+                                        data[SENT_TIME] as Long,
+                                        data[MESSAGE_TEXT].toString(),
+                                        data[MESSAGE_TYPE].toString()
+                                    )
+                                    messageList.add(message)
+                                }
+                            }
+                            this.offer(messageList)
+                        } else {
+                            Log.e(TAG,"snapshot is null error")
+                        }
+                    }
+                }
             awaitClose { listenerRef.remove() }
         }
     }

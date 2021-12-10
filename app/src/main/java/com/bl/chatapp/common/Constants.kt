@@ -22,6 +22,7 @@ object Constants {
     const val FIREBASE_USERS_COLLECTION = "users"
     const val FIREBASE_CHATS_COLLECTION = "Chats"
     const val FIREBASE_MESSAGES_COLLECTION = "Messages"
+    const val FIREBASE_GROUP_CHATS_COLLECTION = "groupChat"
 
     //firebase storage
     const val FIREBASE_PROFILE_IMAGES_ = "profileImages"
@@ -40,6 +41,7 @@ object Constants {
     const val PARTICIPANTS = "participants"
 
     const val MESSAGE_LIST = "MESSAGE_LIST"
+    const val SELECTED_GROUP = "SELECTED_GROUP"
 
 
 }

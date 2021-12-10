@@ -34,6 +34,7 @@ class GroupListAdapter(
 
         fun setUserInfo(context: Context, group: GroupInfo) {
             groupName.text = group.groupName
+            profileImage.setImageResource(R.drawable.whatsapp_group_user)
         }
 
         init {

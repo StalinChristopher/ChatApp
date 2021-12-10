@@ -25,15 +25,24 @@ class UserListFragment : Fragment(R.layout.user_list_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = UserListFragmentBinding.bind(view)
-        addFab = binding.userListFloatingButton
         currentUser = arguments?.getSerializable(USER_DETAILS) as UserDetails
         newGroupViewModel = ViewModelProvider(requireActivity())[NewGroupViewModel::class.java]
         newGroupViewModel.getUserListFromDb(currentUser)
-        addFab.setOnClickListener {
+        initialiseRecycleView()
+        listeners()
+        observe()
+    }
+
+    private fun listeners() {
+        binding.userListBackButton.setOnClickListener {
+            activity?.run {
+                finish()
+            }
+        }
+
+        binding.userListFloatingButton.setOnClickListener {
             gotoSetGroupNamePage()
         }
-        initialiseRecycleView()
-        observe()
     }
 
     private fun gotoSetGroupNamePage() {

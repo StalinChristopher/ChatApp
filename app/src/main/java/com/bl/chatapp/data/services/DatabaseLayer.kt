@@ -70,18 +70,6 @@ class DatabaseLayer() {
         }
     }
 
-//    suspend fun getUserListFromDb(user: UserDetails) : ArrayList<UserDetails>? {
-//        return withContext(Dispatchers.IO) {
-//            try {
-//                val userList = fireStoreDb.getUserListFromDb(user)
-//                userList
-//            } catch (e: Exception) {
-//                Log.e("DatabaseLayer", "read user list failed")
-//                null
-//            }
-//        }
-//    }
-
     fun getUserListFromDb(user: UserDetails) : Flow<ArrayList<UserDetails>?> {
         return fireStoreDb.getAllUsersFromDb(user)
     }
@@ -142,6 +130,38 @@ class DatabaseLayer() {
                 Log.e("DatabaseLayer", "create group exception")
                 false
             }
+        }
+    }
+
+    suspend fun sendNewMessageToGroup(currentUser: UserDetails, selectedGroup: GroupInfo, messageWrapper: MessageWrapper): Boolean {
+        return  withContext(Dispatchers.IO) {
+            try {
+                val resultStatus = fireStoreDb.sendNewMessageToGroup(currentUser, selectedGroup, messageWrapper)
+                resultStatus
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
+    fun getMessageListOfGroup(group: GroupInfo): Flow<ArrayList<Message>?> {
+        return fireStoreDb.getAllMessagesOfGroup(group)
+    }
+
+    suspend fun getUsersInfoFromParticipants(userIdList: ArrayList<String>) : ArrayList<UserDetails> {
+        return withContext(Dispatchers.IO) {
+            val userList = ArrayList<UserDetails>()
+            for(id in userIdList) {
+                try {
+                    val user = fireStoreDb.getUserInfoFromId(id)
+                    userList.add(user)
+                } catch(e: Exception) {
+                    Log.e("DatabaseLayer", "error while fetching user")
+                    e.printStackTrace()
+                }
+            }
+            userList
         }
     }
 }

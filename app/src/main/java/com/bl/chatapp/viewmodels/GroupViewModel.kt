@@ -11,7 +11,7 @@ import com.bl.chatapp.wrappers.UserDetails
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class GroupViewModel : ViewModel() {
+class GroupViewModel() : ViewModel() {
     val participants = ArrayList<GroupInfo>()
 
     private val _getAllGroupsStatus = MutableLiveData<Boolean>()

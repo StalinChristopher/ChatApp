@@ -1,17 +1,14 @@
 package com.bl.chatapp.ui.home.chats.chatdetails
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bl.chatapp.common.Constants
 import com.bl.chatapp.common.Constants.CURRENT_USER
 import com.bl.chatapp.common.Constants.FOREIGN_USER
 import com.bl.chatapp.databinding.ActivityChatDetailsBinding
-import com.bl.chatapp.ui.home.HomeActivity
-import com.bl.chatapp.viewmodels.ChatDetailViewModel
 import com.bl.chatapp.viewmodels.ViewModelFactory
 import com.bl.chatapp.wrappers.UserDetails
 import com.bumptech.glide.Glide
@@ -57,7 +54,8 @@ class ChatDetailsActivity : AppCompatActivity() {
     }
 
     private fun initializeView() {
-        binding.chatDetailReceiverTextView.setText(foreignUser.userName)
+        binding.chatDetailGroupMembersLabel.visibility = View.GONE
+        binding.chatDetailReceiverTextView.text = foreignUser.userName
         if (foreignUser.profileImageUrl.isNotBlank()) {
             Glide.with(this).load(foreignUser.profileImageUrl).dontAnimate()
                 .into(binding.chatDetailProfileImage)
@@ -76,7 +74,7 @@ class ChatDetailsActivity : AppCompatActivity() {
             binding.chatDetailEditText.clearFocus()
         }
         binding.backButtonChatDetail.setOnClickListener {
-            gotoHomeActivity()
+            finish()
         }
     }
 
@@ -89,12 +87,5 @@ class ChatDetailsActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    private fun gotoHomeActivity() {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra(Constants.USER_DETAILS, currentUser)
-        finish()
-        startActivity(intent)
     }
 }
