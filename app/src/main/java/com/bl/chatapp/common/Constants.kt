@@ -23,6 +23,8 @@ object Constants {
     const val FIREBASE_PROFILE_IMAGE_URL = "profileImageUrl"
     const val VIEW_TYPE_SENT = 1
     const val VIEW_TYPE_RECEIVE = 2
+    const val VIEW_TYPE_IMAGE_SENT = 3
+    const val VIEW_TYPE_IMAGE_RECEIVE = 4
 
     // fireStore collections
     const val FIREBASE_USERS_COLLECTION = "users"
