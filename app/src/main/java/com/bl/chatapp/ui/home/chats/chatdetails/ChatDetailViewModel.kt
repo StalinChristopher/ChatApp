@@ -1,5 +1,7 @@
 package com.bl.chatapp.ui.home.chats.chatdetails
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +27,9 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
 
     private val _getMessageListStatus = MutableLiveData<Boolean>()
     val getMessageListStatus = _getMessageListStatus as LiveData<Boolean>
+
+    private val _chatImageUploadStatus = MutableLiveData<Boolean>()
+    val chatImageUploadStatus = _chatImageUploadStatus as LiveData<Boolean>
 
     init {
         getMessages(currentUser, foreignUser)
@@ -59,6 +64,16 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
     fun createChannel(currentUser: UserDetails, foreignUser: UserDetails) {
         viewModelScope.launch {
             val status = databaseLayer.createChatId(currentUser, foreignUser)
+        }
+    }
+
+    fun uploadChatImageToCloud(imageUri: Uri) {
+        viewModelScope.launch {
+            val result = databaseLayer.uploadChatImageToCloud(imageUri, currentUser, foreignUser)
+            if(result) {
+                Log.i("ChatDetailViewModel", "Image uploaded successfully and message sent")
+                _chatImageUploadStatus.postValue(true)
+            }
         }
     }
 }

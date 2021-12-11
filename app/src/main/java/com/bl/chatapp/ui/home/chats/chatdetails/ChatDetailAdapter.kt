@@ -22,7 +22,7 @@ class ChatDetailAdapter(
             itemView.findViewById(R.id.sent_message_recycler_text_view)
 
         fun setUserInfo(context: Context, message: Message) {
-            sendTextView.text = message.messageText
+            sendTextView.text = message.content
         }
     }
 
@@ -32,7 +32,7 @@ class ChatDetailAdapter(
         private val receiverNameLabel: TextView = itemView.findViewById(R.id.received_message_recycler_name_text_view)
 
         fun setUserInfo(context: Context, message: Message) {
-            receiveTextView.text = message.messageText
+            receiveTextView.text = message.content
             receiverNameLabel.visibility = View.GONE
         }
     }

@@ -10,7 +10,7 @@ import com.bl.chatapp.common.Constants.FIREBASE_STATUS
 import com.bl.chatapp.common.Constants.FIREBASE_USERNAME
 import com.bl.chatapp.common.Constants.FIREBASE_USERS_COLLECTION
 import com.bl.chatapp.common.Constants.MESSAGE_ID
-import com.bl.chatapp.common.Constants.MESSAGE_TEXT
+import com.bl.chatapp.common.Constants.CONTENT
 import com.bl.chatapp.common.Constants.MESSAGE_TYPE
 import com.bl.chatapp.common.Constants.PARTICIPANTS
 import com.bl.chatapp.common.Constants.RECEIVER_ID
@@ -177,30 +177,21 @@ class FirebaseDatabaseService {
         }
     }
 
-    private fun createChatId(currentUserUid : String, foreignUserUid: String) : String {
-        return if(currentUserUid.compareTo(foreignUserUid) > 0) {
-            "${currentUserUid}_${foreignUserUid}"
-        } else {
-            "${foreignUserUid}_${currentUserUid}"
-        }
-    }
-
     suspend fun sendMessage(
         currentUser: UserDetails,
         foreignUser: UserDetails,
         message: MessageWrapper
     ): Boolean {
         return suspendCoroutine { callback ->
-            val chatId = createChatId(currentUser.uid, foreignUser.uid)
+            val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
             val autoId = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).collection(
                 FIREBASE_MESSAGES_COLLECTION
             ).document().id
             val firebaseMessage = Message(
                 messageId = autoId,
                 senderId = currentUser.uid,
-                receiverId = foreignUser.uid,
                 sentTime = message.messageTime,
-                messageText = message.content,
+                content = message.content,
                 messageType = message.type
             )
             db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).collection(
@@ -222,7 +213,7 @@ class FirebaseDatabaseService {
         foreignUser: UserDetails
     ): Boolean {
         return suspendCoroutine { callback ->
-            val chatId = createChatId(currentUser.uid, foreignUser.uid)
+            val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
             db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -286,11 +277,8 @@ class FirebaseDatabaseService {
                             Message(
                                 msg.getString(MESSAGE_ID)!!,
                                 msg.getString(SENDER_ID)!!,
-                                msg.getString(
-                                    RECEIVER_ID
-                                )!!,
                                 msg.getLong(SENT_TIME)!!,
-                                msg.getString(MESSAGE_TEXT)!!,
+                                msg.getString(CONTENT)!!,
                                 msg.getString(MESSAGE_TYPE)!!
                             )
                         )
@@ -309,7 +297,7 @@ class FirebaseDatabaseService {
     fun getMessages(currentUser: UserDetails, foreignUser: UserDetails) : Flow<ArrayList<Message>?> {
         return callbackFlow {
             val messageList = ArrayList<Message>()
-            val chatId = createChatId(currentUser.uid, foreignUser.uid)
+            val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
             val listenerRef = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId)
                 .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME).addSnapshotListener { snapshot, error ->
                 if(error != null) {
@@ -324,9 +312,8 @@ class FirebaseDatabaseService {
                                 val message = Message(
                                     data[MESSAGE_ID].toString(),
                                     data[SENDER_ID].toString(),
-                                    data[RECEIVER_ID].toString(),
                                     data[SENT_TIME] as Long,
-                                    data[MESSAGE_TEXT].toString(),
+                                    data[CONTENT].toString(),
                                     data[MESSAGE_TYPE].toString()
                                 )
                                 messageList.add(message)
@@ -441,9 +428,8 @@ class FirebaseDatabaseService {
             val firebaseMessage = Message(
                 messageId = autoId,
                 senderId = currentUser.uid,
-                receiverId = "",
                 sentTime = messageWrapper.messageTime,
-                messageText = messageWrapper.content,
+                content = messageWrapper.content,
                 messageType = messageWrapper.type
             )
             db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document(selectedGroup.groupId).collection(
@@ -477,9 +463,8 @@ class FirebaseDatabaseService {
                                     val message = Message(
                                         data[MESSAGE_ID].toString(),
                                         data[SENDER_ID].toString(),
-                                        data[RECEIVER_ID].toString(),
                                         data[SENT_TIME] as Long,
-                                        data[MESSAGE_TEXT].toString(),
+                                        data[CONTENT].toString(),
                                         data[MESSAGE_TYPE].toString()
                                     )
                                     messageList.add(message)

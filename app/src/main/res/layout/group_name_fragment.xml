@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/whatsapp_toolbar_color"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
@@ -62,8 +62,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/whatsapp_view_color"
+        app:layout_constraintStart_toEndOf="@+id/constraint_layout_group_name_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/constraint_layout_group_name_toolbar"
         app:layout_constraintBottom_toBottomOf="@id/guideline12"/>
 
@@ -71,25 +71,28 @@
         android:id="@+id/circleImageView2"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/user"
-        app:layout_constraintBottom_toBottomOf="@id/group_name_view"
-        app:layout_constraintEnd_toStartOf="@+id/group_name_edit_text"
-        app:layout_constraintStart_toEndOf="@+id/group_name_edit_text"
+        android:src="@drawable/whatsapp_group_user"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline12"
+        app:layout_constraintEnd_toStartOf="@id/group_name_edit_text"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/constraint_layout_group_name_toolbar" />
 
     <EditText
         android:id="@+id/group_name_edit_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxLines="1"
         android:hint="@string/enter_your_group_name_here"
+        android:maxLines="1"
         android:textColor="@color/white"
         android:textColorHint="@color/whatsapp_edit_text_hint_color"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline12"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/circleImageView2"
-        app:layout_constraintTop_toBottomOf="@id/constraint_layout_group_name_toolbar"
-        app:layout_constraintBottom_toBottomOf="@id/group_name_view"/>
+        app:layout_constraintStart_toEndOf="@id/circleImageView2"
+        app:layout_constraintTop_toBottomOf="@id/constraint_layout_group_name_toolbar" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline12"
@@ -104,9 +107,9 @@
         android:layout_height="wrap_content"
         android:src="@drawable/done_icon"
         app:tint="@color/add_icon_floating_action_button_color"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/group_name_view"
         app:layout_constraintEnd_toEndOf="@id/group_name_view"
-        app:layout_constraintTop_toBottomOf="@id/group_name_view" />
-
+        app:layout_constraintTop_toBottomOf="@id/group_name_view"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

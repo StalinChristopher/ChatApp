@@ -41,6 +41,7 @@ class ProfileActivity : AppCompatActivity(){
         observers()
         pleaseWaitDialog = Dialog(this)
         pleaseWaitDialog.setContentView(R.layout.dialog_loading)
+        pleaseWaitDialog.show()
         profileImageButton = binding.profileImageButton
         updateButton = binding.profileOkButton
         listeners()
@@ -71,6 +72,7 @@ class ProfileActivity : AppCompatActivity(){
                     profileImageUrl = currentUser.profileImageUrl )
                 currentUser = updateUser
                 sharedViewModel.updateUserProfileDetails(updateUser)
+                pleaseWaitDialog.show()
             }
 
         }
@@ -109,14 +111,6 @@ class ProfileActivity : AppCompatActivity(){
     }
 
     private fun observers() {
-        sharedViewModel.getUserInfoStatus.observe(this, {
-            if(it != null) {
-                SharedPref.getInstance(this).addUserId(it.uid)
-                currentUser = it
-                initializeProfile(it)
-            }
-        })
-
         sharedViewModel.setUserProfileImageStatus.observe(this, {
             if(it != null) {
                 pleaseWaitDialog.hide()
@@ -127,7 +121,7 @@ class ProfileActivity : AppCompatActivity(){
 
         sharedViewModel.updateUserInfoStatus.observe(this, {
             if(it) {
-                pleaseWaitDialog.hide()
+                pleaseWaitDialog.dismiss()
                 gotoHomeActivity()
 
             }
@@ -142,13 +136,12 @@ class ProfileActivity : AppCompatActivity(){
     }
 
     private fun initializeProfile(user: UserDetails) {
-        pleaseWaitDialog.show()
         if(user.profileImageUrl.isNotEmpty()) {
             Glide.with(this).load(user.profileImageUrl).dontAnimate().into(profileImageButton)
         }
         binding.profileUsername.setText(user.userName)
         binding.profileStatus.setText(user.status)
-        pleaseWaitDialog.hide()
+        pleaseWaitDialog.dismiss()
     }
 
     private fun gotoHomeActivity() {
