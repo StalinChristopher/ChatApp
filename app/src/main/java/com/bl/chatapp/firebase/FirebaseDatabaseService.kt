@@ -1,4 +1,4 @@
-package com.bl.chatapp.data.services
+package com.bl.chatapp.firebase
 
 import android.util.Log
 import com.bl.chatapp.common.Constants.FIREBASE_CHATS_COLLECTION
@@ -11,9 +11,9 @@ import com.bl.chatapp.common.Constants.FIREBASE_USERNAME
 import com.bl.chatapp.common.Constants.FIREBASE_USERS_COLLECTION
 import com.bl.chatapp.common.Constants.MESSAGE_ID
 import com.bl.chatapp.common.Constants.CONTENT
+import com.bl.chatapp.common.Constants.FIREBASE_TOKEN
 import com.bl.chatapp.common.Constants.MESSAGE_TYPE
 import com.bl.chatapp.common.Constants.PARTICIPANTS
-import com.bl.chatapp.common.Constants.RECEIVER_ID
 import com.bl.chatapp.common.Constants.SENDER_ID
 import com.bl.chatapp.common.Constants.SENT_TIME
 import com.bl.chatapp.common.Utilities
@@ -43,7 +43,7 @@ class FirebaseDatabaseService {
 
     suspend fun addUserInfoToDatabase(userDetails: UserDetails): UserDetails {
         return suspendCoroutine { callback ->
-            val dbUser = FirebaseUser(userDetails.userName, userDetails.status, userDetails.phone)
+            val dbUser = FirebaseUser(userDetails.userName, userDetails.status, userDetails.phone, firebaseToken = userDetails.firebaseTokenId)
             db.collection(FIREBASE_USERS_COLLECTION).document(userDetails.uid).set(dbUser)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -70,8 +70,9 @@ class FirebaseDatabaseService {
                                     uid = fuId,
                                     userName = userFromDb.userName,
                                     status = userFromDb.status,
-                                    phone = userFromDb.phoneNumber,
-                                    profileImageUrl = userFromDb.profileImageUrl
+                                    phone = userDetails.phone,
+                                    profileImageUrl = userFromDb.profileImageUrl,
+                                    firebaseTokenId = userFromDb.firebaseToken
                                 )
                                 callback.resumeWith(Result.success(user))
                             } else {
@@ -86,23 +87,20 @@ class FirebaseDatabaseService {
         }
     }
 
-    suspend fun updateUserInfoFromDatabase(user: UserDetails): Boolean {
+    suspend fun updateUserInfoFromDatabase(user: UserDetails): UserDetails {
         return suspendCoroutine { callback ->
             val fuId = user.uid
-            var firebaseUser = FirebaseUser(
-                userName = user.userName, status = user.status,
-                phoneNumber = user.phone, profileImageUrl = user.profileImageUrl
-            )
             val userMap = mapOf(
                 FIREBASE_USERNAME to user.userName,
                 FIREBASE_STATUS to user.status,
                 FIREBASE_PHONE to user.phone,
-                FIREBASE_PROFILE_IMAGE_URL to user.profileImageUrl
+                FIREBASE_PROFILE_IMAGE_URL to user.profileImageUrl,
+                FIREBASE_TOKEN to user.firebaseTokenId
             )
             db.collection(FIREBASE_USERS_COLLECTION).document(fuId).update(userMap)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        callback.resumeWith(Result.success(true))
+                        callback.resumeWith(Result.success(user))
                     } else {
                         Log.e(TAG, "Update user failed")
                         callback.resumeWith(Result.failure(it.exception!!))
@@ -125,7 +123,8 @@ class FirebaseDatabaseService {
                                     userName = userFromDb.userName,
                                     status = userFromDb.status,
                                     phone = userFromDb.phoneNumber,
-                                    profileImageUrl = userFromDb.profileImageUrl
+                                    profileImageUrl = userFromDb.profileImageUrl,
+                                    firebaseTokenId = userFromDb.firebaseToken
                                 )
                                 callback.resumeWith(Result.success(user))
                             } else {
@@ -181,7 +180,7 @@ class FirebaseDatabaseService {
         currentUser: UserDetails,
         foreignUser: UserDetails,
         message: MessageWrapper
-    ): Boolean {
+    ): Message {
         return suspendCoroutine { callback ->
             val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
             val autoId = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId).collection(
@@ -199,7 +198,7 @@ class FirebaseDatabaseService {
             ).document(autoId).set(firebaseMessage).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i(TAG, "Message added successfully")
-                    callback.resumeWith(Result.success(true))
+                    callback.resumeWith(Result.success(firebaseMessage))
                 } else {
                     Log.i(TAG, "Message add failed")
                     callback.resumeWith(Result.failure(it.exception!!))
@@ -350,10 +349,11 @@ class FirebaseDatabaseService {
                                     val status = userMap[FIREBASE_STATUS].toString()
                                     val phone = userMap[FIREBASE_PHONE].toString()
                                     val profileImageUrl = userMap[FIREBASE_PROFILE_IMAGE_URL].toString()
+                                    val userToken = userMap[FIREBASE_TOKEN].toString()
                                     val uid = item.id
                                     val userFromDb = UserDetails(
                                         userName = userName, status = status, phone = phone,
-                                        profileImageUrl = profileImageUrl, uid = uid
+                                        profileImageUrl = profileImageUrl, uid = uid, firebaseTokenId = userToken
                                     )
                                     userList.add(userFromDb)
                                 }
@@ -419,7 +419,7 @@ class FirebaseDatabaseService {
     }
 
     suspend fun sendNewMessageToGroup(currentUser: UserDetails, selectedGroup: GroupInfo,
-                                      messageWrapper: MessageWrapper): Boolean {
+                                      messageWrapper: MessageWrapper): Message {
         return suspendCoroutine { callback ->
             val autoId = db.collection(FIREBASE_GROUP_CHATS_COLLECTION)
                 .document(selectedGroup.groupId).collection(
@@ -437,7 +437,7 @@ class FirebaseDatabaseService {
             ).document(autoId).set(firebaseMessage).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i(TAG, "Group Message added successfully")
-                    callback.resumeWith(Result.success(true))
+                    callback.resumeWith(Result.success(firebaseMessage))
                 } else {
                     Log.i(TAG, "Group Message add failed")
                     callback.resumeWith(Result.failure(it.exception!!))

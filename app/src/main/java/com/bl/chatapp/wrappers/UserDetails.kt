@@ -4,6 +4,7 @@ import java.io.Serializable
 
 data class UserDetails(
     var uid: String,
+    var firebaseTokenId: String = "",
     var newUser: Boolean = false,
     var userName: String = "",
     var status: String = "",

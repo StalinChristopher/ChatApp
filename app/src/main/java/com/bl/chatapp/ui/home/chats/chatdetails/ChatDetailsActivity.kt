@@ -68,7 +68,7 @@ class ChatDetailsActivity : AppCompatActivity() {
         chatDetailAdapter = ChatDetailAdapter(this, chatDetailViewModel.messageList, currentUser)
         chatDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
-//        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.reverseLayout = true
         linearLayoutManager.stackFromEnd = true
         chatDetailRecyclerView.layoutManager = linearLayoutManager
         chatDetailRecyclerView.setHasFixedSize(true)
@@ -163,14 +163,21 @@ class ChatDetailsActivity : AppCompatActivity() {
         chatDetailViewModel.getMessageListStatus.observe(this, {
             chatDetailAdapter.notifyDataSetChanged()
             if (chatDetailAdapter.itemCount != 0) {
-                chatDetailRecyclerView.smoothScrollToPosition(chatDetailAdapter.itemCount - 1)
+                chatDetailRecyclerView.smoothScrollToPosition(0)
             }
 
         })
 
-        chatDetailViewModel.chatImageUploadStatus.observe(this, {
-            if(it) {
+        chatDetailViewModel.chatImageUploadStatus.observe(this, { message ->
+            if(message != null) {
                 pleaseWaitDialog.dismiss()
+                chatDetailViewModel.sendPushNotification(message)
+            }
+        })
+
+        chatDetailViewModel.sendMessageStatus.observe(this, { message ->
+            if(message != null) {
+                chatDetailViewModel.sendPushNotification(message)
             }
         })
     }

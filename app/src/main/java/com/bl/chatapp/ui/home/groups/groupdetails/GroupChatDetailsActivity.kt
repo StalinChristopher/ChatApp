@@ -64,13 +64,23 @@ class GroupChatDetailsActivity : AppCompatActivity() {
             if (it) {
                 if (this::groupChatDetailsAdapter.isInitialized) {
                     groupChatDetailsAdapter.notifyDataSetChanged()
+                    if(groupChatDetailsAdapter.itemCount != 0) {
+                        groupDetailRecyclerView.smoothScrollToPosition(0)
+                    }
                 }
             }
         })
 
-        groupChatDetailViewModel.groupChatImageUploadStatus.observe(this, {
-            if(it) {
+        groupChatDetailViewModel.groupChatImageUploadStatus.observe(this, { message ->
+            if(message != null) {
                 pleaseWaitDialog.dismiss()
+                groupChatDetailViewModel.sendGroupNotifications(message)
+            }
+        })
+
+        groupChatDetailViewModel.sendMessageToGroupStatus.observe(this, { message ->
+            if(message != null) {
+                groupChatDetailViewModel.sendGroupNotifications(message)
             }
         })
     }
@@ -84,6 +94,7 @@ class GroupChatDetailsActivity : AppCompatActivity() {
         groupDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.reverseLayout = true
         groupDetailRecyclerView.layoutManager = linearLayoutManager
         groupDetailRecyclerView.setHasFixedSize(true)
         groupDetailRecyclerView.adapter = groupChatDetailsAdapter

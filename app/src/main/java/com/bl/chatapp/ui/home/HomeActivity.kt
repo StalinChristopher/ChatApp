@@ -44,13 +44,13 @@ class HomeActivity : AppCompatActivity() {
         )[LoginViewModel::class.java]
         listeners()
         currentUser = intent.getSerializableExtra(USER_DETAILS) as UserDetails
-        sharedViewModel.getUserData(currentUser)
+        sharedViewModel.getUserInfoFromId(currentUser.uid)
         initializeTabLayout()
         observers()
     }
 
     private fun observers() {
-        sharedViewModel.getUserInfoStatus.observe(this, {
+        sharedViewModel.userInfoFromIdStatus.observe(this, {
             if(it != null) {
                 SharedPref.getInstance(this).addUserId(it.uid)
                 currentUser = it
@@ -101,7 +101,7 @@ class HomeActivity : AppCompatActivity() {
         when (itemView) {
             R.id.profile_menu_item -> gotoProfileScreen()
             R.id.logout_menu_item -> {
-                SharedPref.getInstance(this).clearAll()
+                SharedPref.getInstance(this).removeUserId()
                 loginViewModel.logOut()
                 gotoAuthenticationActivity()
             }

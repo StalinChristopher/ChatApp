@@ -4,5 +4,6 @@ data class FirebaseUser(
     var userName: String,
     var status: String,
     var phoneNumber: String,
-    var profileImageUrl: String = ""
+    var profileImageUrl: String = "",
+    var firebaseToken: String = ""
 )

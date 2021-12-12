@@ -28,8 +28,13 @@ class SharedPref(private val context: Context) {
         return sharedPreferences.getString("uid",DEFAULT_USER_ID).toString()
     }
 
-    fun getValue(key: String): String? {
-        return sharedPreferences.getString(key, key)
+    fun getValue(key: String): String {
+        return sharedPreferences.getString(key, "default_value").toString()
+    }
+
+    fun removeUserId() {
+        sharedPrefEdit.remove("uid")
+        sharedPrefEdit.apply()
     }
 
     fun removeKey(key: String) {

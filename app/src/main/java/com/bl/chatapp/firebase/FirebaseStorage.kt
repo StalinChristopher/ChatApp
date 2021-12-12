@@ -1,4 +1,4 @@
-package com.bl.chatapp.data.services
+package com.bl.chatapp.firebase
 
 import android.content.Context
 import android.net.Uri
