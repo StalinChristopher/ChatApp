@@ -1,7 +1,11 @@
 package com.bl.chatapp.data.services
 
-import android.content.Context
+import android.net.Uri
 import android.util.Log
+import com.bl.chatapp.common.Constants.FIREBASE_CHAT_IMAGES
+import com.bl.chatapp.common.Constants.FIREBASE_GROUP_CHAT_IMAGES
+import com.bl.chatapp.common.Constants.IMAGE
+import com.bl.chatapp.common.Utilities
 import com.bl.chatapp.data.models.Chat
 import com.bl.chatapp.data.models.GroupInfo
 import com.bl.chatapp.data.models.Message
@@ -11,9 +15,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DatabaseLayer() {
     private var fireStoreDb: FirebaseDatabaseService = FirebaseDatabaseService()
+    private var firebaseStorage: FirebaseStorage = FirebaseStorage()
 
 //    companion object {
 //        private val instance: DatabaseLayer? by lazy { null }
@@ -162,6 +169,42 @@ class DatabaseLayer() {
                 }
             }
             userList
+        }
+    }
+
+    suspend fun uploadChatImageToCloud(imageUri: Uri, currentUser: UserDetails, foreignUser: UserDetails): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
+                val url = firebaseStorage.uploadImageToCloud(imageUri, FIREBASE_CHAT_IMAGES, chatId)
+                val cal = Calendar.getInstance()
+                val time = cal.timeInMillis
+                val messageWrapper = MessageWrapper(url, time, IMAGE)
+                val resutStatus = fireStoreDb.sendMessage(currentUser, foreignUser, messageWrapper)
+                resutStatus
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer", "upload image failed exception")
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
+    suspend fun uploadGroupImageToCloud(imageUri: Uri, selectedGroup: GroupInfo, currentUser: UserDetails): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val groupId = selectedGroup.groupId
+                val url = firebaseStorage.uploadImageToCloud(imageUri, FIREBASE_GROUP_CHAT_IMAGES, groupId)
+                val cal = Calendar.getInstance()
+                val time = cal.timeInMillis
+                val messageWrapper = MessageWrapper(url, time, IMAGE)
+                val resulStatus = fireStoreDb.sendNewMessageToGroup(currentUser, selectedGroup, messageWrapper)
+                resulStatus
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer", "upload image failed exception")
+                e.printStackTrace()
+                false
+            }
         }
     }
 }

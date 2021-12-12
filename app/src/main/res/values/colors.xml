@@ -18,6 +18,9 @@
     <color name="whatsapp_edit_text_hint_color">#939CA1</color>
     <color name="whatsapp_view_color">#2c333b</color>
     <color name="whatsapp_receive_message_bubble_color">#3C3C3E</color>
+    <color name="whatsapp_floating_button_color">#00B09C</color>
+    <color name="whatsapp_floating_button_icon_color">#FEFEFF</color>
+    <color name="whatsapp_statusBar_color">#101D25</color>
 
 
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#fff</color>

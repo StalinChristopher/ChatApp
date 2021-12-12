@@ -1,5 +1,7 @@
 package com.bl.chatapp.ui.home.groups.groupdetails
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,6 +33,9 @@ class GroupChatDetailViewModel(
 
     private val _getUserInfoFromParticipantsStatus = MutableLiveData<Boolean>()
     val getUserInfoFromParticipantsStatus = _getUserInfoFromParticipantsStatus as LiveData<Boolean>
+
+    private val _groupChatImageUploadStatus = MutableLiveData<Boolean>()
+    val groupChatImageUploadStatus = _groupChatImageUploadStatus as LiveData<Boolean>
 
     init {
         getALlMessagesOfGroup(selectedGroup)
@@ -72,6 +77,16 @@ class GroupChatDetailViewModel(
             memberList.clear()
             memberList.addAll(result)
             _getUserInfoFromParticipantsStatus.postValue(true)
+        }
+    }
+
+    fun uploadGroupChatImage(imageUri: Uri) {
+        viewModelScope.launch {
+            val result = databaseLayer.uploadGroupImageToCloud(imageUri, selectedGroup, currentUser)
+            if(result) {
+                Log.i("ChatDetailViewModel", "Image uploaded successfully and message sent")
+                _groupChatImageUploadStatus.postValue(true)
+            }
         }
     }
 }

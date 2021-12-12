@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/pt_sans"
         android:textSize="12sp"
+        android:text="sfsgsddsg"
         android:textColor="@color/whatsapp_primary"
         app:layout_constraintBottom_toTopOf="@id/received_message_recycler_text_view"
         app:layout_constraintEnd_toEndOf="parent"

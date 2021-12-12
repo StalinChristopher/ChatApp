@@ -16,4 +16,12 @@ object Utilities {
             userMap[FIREBASE_PROFILE_IMAGE_URL].toString()
         )
     }
+
+    fun createChatId(currentUserUid : String, foreignUserUid: String) : String {
+        return if(currentUserUid.compareTo(foreignUserUid) > 0) {
+            "${currentUserUid}_${foreignUserUid}"
+        } else {
+            "${foreignUserUid}_${currentUserUid}"
+        }
+    }
 }
