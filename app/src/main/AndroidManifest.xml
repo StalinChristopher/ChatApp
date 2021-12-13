@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
         <activity
+            android:name=".ui.home.chats.chatdetails.ViewForeignUserActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.view_mage.ViewImageActivity"
             android:exported="true" />
         <activity
@@ -49,6 +52,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_baseline_whatsapp_24" />
+
         <service
             android:name=".firebase.FirebaseCloudMessagingService"
             android:exported="false">

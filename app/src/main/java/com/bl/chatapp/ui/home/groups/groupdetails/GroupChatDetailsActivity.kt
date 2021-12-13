@@ -65,9 +65,9 @@ class GroupChatDetailsActivity : AppCompatActivity() {
             if (it) {
                 if (this::groupChatDetailsAdapter.isInitialized) {
                     groupChatDetailsAdapter.notifyDataSetChanged()
-                    if(groupChatDetailsAdapter.itemCount != 0) {
-                        groupDetailRecyclerView.smoothScrollToPosition(0)
-                    }
+//                    if(groupChatDetailsAdapter.itemCount != 0) {
+//                        groupDetailRecyclerView.smoothScrollToPosition(0)
+//                    }
                 }
             }
         })
@@ -94,7 +94,7 @@ class GroupChatDetailsActivity : AppCompatActivity() {
         )
         groupDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.stackFromEnd = true
+//        linearLayoutManager.stackFromEnd = true
         linearLayoutManager.reverseLayout = true
         groupDetailRecyclerView.layoutManager = linearLayoutManager
         groupDetailRecyclerView.setHasFixedSize(true)

@@ -69,11 +69,19 @@ class ChatDetailsActivity : AppCompatActivity() {
         chatDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.stackFromEnd = false
         chatDetailRecyclerView.layoutManager = linearLayoutManager
         chatDetailRecyclerView.setHasFixedSize(true)
         chatDetailRecyclerView.adapter = chatDetailAdapter
+        chatDetailRecyclerView.post {chatDetailRecyclerView.smoothScrollToPosition(0)}
+        chatDetailRecyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+            }
+        })
     }
+
 
     private fun initializeView() {
         binding.chatDetailGroupMembersLabel.visibility = View.GONE
@@ -114,6 +122,20 @@ class ChatDetailsActivity : AppCompatActivity() {
                 )
             }
         }
+
+        binding.chatDetailProfileImage.setOnClickListener {
+            gotoForeignUserScreen(foreignUser)
+        }
+
+        binding.chatDetailReceiverTextView.setOnClickListener {
+            gotoForeignUserScreen(foreignUser)
+        }
+    }
+
+    private fun gotoForeignUserScreen(foreignUser: UserDetails) {
+        val intent = Intent(this, ViewForeignUserActivity::class.java)
+        intent.putExtra(FOREIGN_USER, foreignUser)
+        startActivity(intent)
     }
 
     private fun selectImageFromGallery() {
@@ -162,9 +184,9 @@ class ChatDetailsActivity : AppCompatActivity() {
     private fun observers() {
         chatDetailViewModel.getMessageListStatus.observe(this, {
             chatDetailAdapter.notifyDataSetChanged()
-            if (chatDetailAdapter.itemCount != 0) {
-                chatDetailRecyclerView.smoothScrollToPosition(0)
-            }
+//            chatDetailAdapter.setData(it)
+//            chatDetailViewModel.messageList = it
+            chatDetailRecyclerView.smoothScrollToPosition(0)
 
         })
 

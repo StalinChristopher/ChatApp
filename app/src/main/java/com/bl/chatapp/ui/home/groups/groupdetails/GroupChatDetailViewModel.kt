@@ -65,8 +65,9 @@ class GroupChatDetailViewModel(
         viewModelScope.launch {
             databaseLayer.getMessageListOfGroup(group).collect {
                 messageList.clear()
-                messageList.addAll(it as ArrayList<Message>)
-                messageList.reverse()
+                if (it != null) {
+                    messageList.addAll(it)
+                }
                 _getAllMessagesOfGroupStatus.postValue(true)
 
             }
