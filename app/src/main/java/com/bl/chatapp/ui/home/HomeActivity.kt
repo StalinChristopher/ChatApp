@@ -22,7 +22,6 @@ import com.google.android.material.tabs.TabLayout
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var loginViewModel: LoginViewModel
     private lateinit var homeToolbar : androidx.appcompat.widget.Toolbar
     private lateinit var currentUser : UserDetails
     private lateinit var sharedViewModel: SharedViewModel
@@ -38,10 +37,6 @@ class HomeActivity : AppCompatActivity() {
         tabLayout = binding.homeScreenTabLayout
         viewPager = binding.homeScreenViewPager
         setSupportActionBar(homeToolbar)
-        loginViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(LoginViewModel())
-        )[LoginViewModel::class.java]
         listeners()
         currentUser = intent.getSerializableExtra(USER_DETAILS) as UserDetails
         sharedViewModel.getUserInfoFromId(currentUser.uid)
@@ -102,7 +97,7 @@ class HomeActivity : AppCompatActivity() {
             R.id.profile_menu_item -> gotoProfileScreen()
             R.id.logout_menu_item -> {
                 SharedPref.getInstance(this).removeUserId()
-                loginViewModel.logOut()
+                sharedViewModel.logOut(currentUser.uid)
                 gotoAuthenticationActivity()
             }
         }

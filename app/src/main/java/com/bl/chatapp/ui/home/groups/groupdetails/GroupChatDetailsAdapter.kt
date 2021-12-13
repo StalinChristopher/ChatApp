@@ -24,10 +24,6 @@ class GroupChatDetailsAdapter(
     private val memberList: ArrayList<UserDetails>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-
-
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             VIEW_TYPE_SENT -> {

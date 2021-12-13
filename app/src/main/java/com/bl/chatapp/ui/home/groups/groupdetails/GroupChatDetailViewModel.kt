@@ -97,7 +97,9 @@ class GroupChatDetailViewModel(
             var membersTokenList = ArrayList<String>()
             Log.i("GroupChatDetailViewModel","$memberList")
             memberList.forEach {
-                membersTokenList.add(it.firebaseTokenId)
+                if(it.uid != currentUser.uid) {
+                    membersTokenList.add(it.firebaseTokenId)
+                }
             }
             Log.i("GroupChatDetailViewModel","$membersTokenList")
             if(message.messageType == IMAGE) {

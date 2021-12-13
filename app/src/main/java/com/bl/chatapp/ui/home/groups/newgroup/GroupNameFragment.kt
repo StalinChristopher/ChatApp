@@ -1,8 +1,14 @@
 package com.bl.chatapp.ui.home.groups.newgroup
 
+import android.Manifest
+import android.app.Dialog
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.chatapp.R
@@ -16,9 +22,13 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
     private lateinit var newGroupViewModel: NewGroupViewModel
     private lateinit var participantsList: ArrayList<String>
     private lateinit var currentUser: UserDetails
+    private lateinit var pleaseWaitDialog: Dialog
+    private var groupImageUrl: String = ""
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = GroupNameFragmentBinding.bind(view)
+        pleaseWaitDialog = Dialog(requireContext())
+        pleaseWaitDialog.setContentView(R.layout.dialog_loading)
         newGroupViewModel = ViewModelProvider(requireActivity())[NewGroupViewModel::class.java]
         participantsList = arguments?.getStringArrayList(Constants.PARTICIPANTS) as ArrayList<String>
         currentUser = arguments?.getSerializable(USER_DETAILS) as UserDetails
@@ -34,6 +44,14 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
                 Toast.makeText(requireContext(),
                     "Group could not be created. Please try again", Toast.LENGTH_SHORT).show()
             }
+            pleaseWaitDialog.dismiss()
+        })
+
+        newGroupViewModel.setGroupImageStatus.observe(viewLifecycleOwner, {
+            if(it != null) {
+                groupImageUrl = it
+                pleaseWaitDialog.dismiss()
+            }
         })
     }
 
@@ -42,12 +60,29 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
     }
 
     private fun listeners() {
+
+        binding.groupImageView.setOnClickListener {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                selectImageFromGallery()
+            } else {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    Constants.STORAGE_PERMISSION_CODE
+                )
+            }
+        }
         binding.groupNameFloatingButton.setOnClickListener {
             val groupName = binding.groupNameEditText.text.toString().trim()
             if(groupName.isBlank()) {
                 binding.groupNameEditText.error = getString(R.string.group_name_empty_error)
             } else {
-                newGroupViewModel.createGroup(participantsList, groupName)
+                newGroupViewModel.createGroup(participantsList, groupName, groupImageUrl)
+                pleaseWaitDialog.show()
             }
         }
 
@@ -55,6 +90,39 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
             activity?.run {
                 supportFragmentManager.popBackStack()
             }
+        }
+    }
+
+    private fun selectImageFromGallery() {
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(galleryIntent, Constants.IMAGE_FROM_GALLERY_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Constants.STORAGE_PERMISSION_CODE && grantResults.isNotEmpty()) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.storage_access_required_toast),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Constants.IMAGE_FROM_GALLERY_CODE && data != null) {
+            var imageUri = data.data
+            pleaseWaitDialog.show()
+            binding.groupImageView.setImageURI(imageUri)
+            newGroupViewModel.setGroupImage(imageUri!!)
+            pleaseWaitDialog.show()
         }
     }
 

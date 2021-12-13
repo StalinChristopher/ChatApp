@@ -23,6 +23,7 @@ import com.bl.chatapp.databinding.ActivityChatDetailsBinding
 import com.bl.chatapp.ui.view_mage.ViewImageActivity
 import com.bl.chatapp.viewmodels.ViewModelFactory
 import com.bl.chatapp.wrappers.UserDetails
+import com.bumptech.glide.Glide
 
 class GroupChatDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatDetailsBinding
@@ -102,7 +103,11 @@ class GroupChatDetailsActivity : AppCompatActivity() {
 
     private fun initializeView() {
         binding.chatDetailReceiverTextView.text = selectedGroup.groupName
-        binding.chatDetailProfileImage.setImageResource(R.drawable.whatsapp_group_user)
+        if(selectedGroup.groupImageUrl.isNotBlank()) {
+            Glide.with(this).load(selectedGroup.groupImageUrl).into(binding.chatDetailProfileImage)
+        } else {
+            binding.chatDetailProfileImage.setImageResource(R.drawable.whatsapp_group_user)
+        }
     }
 
     private fun listeners() {

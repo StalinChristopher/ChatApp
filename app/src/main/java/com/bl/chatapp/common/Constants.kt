@@ -34,6 +34,7 @@ object Constants {
     const val FIREBASE_GROUP_CHATS_COLLECTION = "groupChat"
 
     //firebase storage
+    const val FIREBASE_GROUP_PROFILE_IMAGE = "groupProfileImages"
     const val FIREBASE_PROFILE_IMAGES_ = "profileImages"
     const val FIREBASE_CHAT_IMAGES = "chat_images"
     const val FIREBASE_GROUP_CHAT_IMAGES = "group_chat_images"

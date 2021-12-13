@@ -369,13 +369,16 @@ class FirebaseDatabaseService {
         }
     }
 
-    suspend fun createGroupChannel(participants: ArrayList<String>, groupName: String) : Boolean {
+    suspend fun createGroupChannel(participants: ArrayList<String>, groupName: String, groupImageUrl: String) : Boolean {
         return suspendCoroutine { callback ->
+            val autoId = db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document().id
             val map = mapOf(
+                "groupId" to autoId,
                 "groupName" to groupName,
+                "groupImageUrl" to groupImageUrl,
                 "participants" to participants
             )
-            db.collection(FIREBASE_GROUP_CHATS_COLLECTION).add(map).addOnCompleteListener {
+            db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document(autoId).set(map).addOnCompleteListener {
                 if(it.isSuccessful) {
                     Log.i(TAG, "create group successful")
                     callback.resumeWith(Result.success(true))
@@ -404,7 +407,8 @@ class FirebaseDatabaseService {
                                 val groupId = item.id
                                 val participants = groupMap[PARTICIPANTS] as ArrayList<String>
                                 val groupName = groupMap["groupName"].toString()
-                                val groupInfo = GroupInfo(groupId, groupName, participants)
+                                val groupImageUrl = groupMap["groupImageUrl"].toString()
+                                val groupInfo = GroupInfo(groupId, groupName, groupImageUrl, participants)
                                 groupList.add(groupInfo)
                             }
                         }
@@ -477,6 +481,20 @@ class FirebaseDatabaseService {
                     }
                 }
             awaitClose { listenerRef.remove() }
+        }
+    }
+
+    suspend fun updateFieldsOfDocument(uid: String, map: Map<String, *>) {
+        return suspendCoroutine { callback ->
+            db.collection(FIREBASE_USERS_COLLECTION).document(uid).update(map).addOnCompleteListener {
+                if(it.isSuccessful) {
+                    Log.i("DatabaseLayer", "updated given fields")
+                    callback.resumeWith(Result.success(Unit))
+                } else {
+                    Log.e("DatabaseLayer", "given fields not updated")
+                    callback.resumeWith(Result.failure(it.exception!!))
+                }
+            }
         }
     }
 }

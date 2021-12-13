@@ -2,8 +2,10 @@ package com.bl.chatapp.data.datalayer
 
 import android.net.Uri
 import android.util.Log
+import com.bl.chatapp.authservice.FirebaseAuthentication
 import com.bl.chatapp.common.Constants.FIREBASE_CHAT_IMAGES
 import com.bl.chatapp.common.Constants.FIREBASE_GROUP_CHAT_IMAGES
+import com.bl.chatapp.common.Constants.FIREBASE_TOKEN
 import com.bl.chatapp.common.Constants.IMAGE
 import com.bl.chatapp.common.Utilities
 import com.bl.chatapp.data.models.Chat
@@ -27,13 +29,8 @@ import kotlin.collections.ArrayList
 class DatabaseLayer() {
     private var fireStoreDb: FirebaseDatabaseService = FirebaseDatabaseService()
     private var firebaseStorage: FirebaseStorage = FirebaseStorage()
-    private var firebaseMessaging: FirebaseCloudMessagingService = FirebaseCloudMessagingService()
     private var pushNotificationSenderService = PushNotificationSenderService()
-
-//    companion object {
-//        private val instance: DatabaseLayer? by lazy { null }
-//        fun getInstance(context: Context): DatabaseLayer = instance ?: DatabaseLayer(context)
-//    }
+    private var firebaseAuth = FirebaseAuthentication()
 
     suspend fun addUserInfoToDatabase(userDetails: UserDetails): UserDetails? {
         return withContext(Dispatchers.IO) {
@@ -149,10 +146,10 @@ class DatabaseLayer() {
         return fireStoreDb.getAllGroupsOfUser(currentUser)
     }
 
-    suspend fun createGroup(participants: ArrayList<String>, groupName: String) : Boolean {
+    suspend fun createGroup(participants: ArrayList<String>, groupName: String, groupImageUrl: String) : Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val result = fireStoreDb.createGroupChannel(participants, groupName)
+                val result = fireStoreDb.createGroupChannel(participants, groupName, groupImageUrl)
                 result
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -249,7 +246,37 @@ class DatabaseLayer() {
     suspend fun sendNotificationToGroup(membersTokenList: ArrayList<String>, title: String, message: String, imageUrl: String) {
         return withContext(Dispatchers.IO) {
             membersTokenList.forEach { memberToken ->
+                Log.i("Database layer", "called")
                 sendNotificationToUser(memberToken, title, message, imageUrl)
+            }
+        }
+    }
+
+    suspend fun setGroupImageInCloud(imageUri: Uri): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val resultUrl = firebaseStorage.setGroupImage(imageUri)
+                resultUrl
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer", "upload image failed exception")
+                e.printStackTrace()
+                null
+            }
+
+        }
+    }
+
+    suspend fun logOutFromTheApp(uid: String) {
+        return withContext(Dispatchers.IO) {
+            try {
+                val map = mapOf(
+                    FIREBASE_TOKEN to ""
+                )
+                fireStoreDb.updateFieldsOfDocument(uid, map)
+                firebaseAuth.logOutFromApp()
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer","update field exception")
+                e.printStackTrace()
             }
         }
     }

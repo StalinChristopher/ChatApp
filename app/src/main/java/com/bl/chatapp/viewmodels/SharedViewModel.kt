@@ -85,4 +85,10 @@ class SharedViewModel : ViewModel() {
             _updateUserStatusStatus.postValue(result)
         }
     }
+
+    fun logOut(uid: String) {
+        viewModelScope.launch {
+            databaseLayer.logOutFromTheApp(uid)
+        }
+    }
 }
