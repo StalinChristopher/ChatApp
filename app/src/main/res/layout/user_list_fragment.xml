@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="27dp"
             android:fontFamily="@font/pt_sans"
-            android:text="Add participants"
+            android:text="@string/add_participants"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/user_list_back_button"

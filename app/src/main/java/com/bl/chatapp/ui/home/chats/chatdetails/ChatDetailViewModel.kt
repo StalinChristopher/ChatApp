@@ -32,6 +32,9 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
     private val _chatImageUploadStatus = MutableLiveData<Message>()
     val chatImageUploadStatus = _chatImageUploadStatus as LiveData<Message>
 
+    private val _getPagedMessagesStatus = MutableLiveData<ArrayList<Message>>()
+    val getPagedMessageStatus = _getPagedMessagesStatus as LiveData<ArrayList<Message>>
+
     init {
         getMessages(currentUser, foreignUser)
     }
@@ -87,6 +90,15 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
                 databaseLayer.sendNotificationToUser(foreignUser.firebaseTokenId, currentUser.userName, "", message.content)
             } else {
                 databaseLayer.sendNotificationToUser(foreignUser.firebaseTokenId, currentUser.userName, message.content, "")
+            }
+        }
+    }
+
+    fun getPagedMessages(currentUser: UserDetails, foreignUser: UserDetails, offset: Long) {
+        viewModelScope.launch {
+            val pagedMessageList = databaseLayer.getPagedMessages(currentUser, foreignUser, offset)
+            if(pagedMessageList != null) {
+                _getPagedMessagesStatus.postValue(pagedMessageList)
             }
         }
     }

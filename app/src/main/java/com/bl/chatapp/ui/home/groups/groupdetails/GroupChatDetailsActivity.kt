@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -33,6 +34,11 @@ class GroupChatDetailsActivity : AppCompatActivity() {
     private lateinit var groupDetailRecyclerView: RecyclerView
     private lateinit var groupChatDetailsAdapter: GroupChatDetailsAdapter
     private lateinit var pleaseWaitDialog: Dialog
+    private var offset = 0L
+    private var isLoading = false
+    private var visibleItems = 0
+    private var totalItems = 0
+    private var firstVisibleItem = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatDetailsBinding.inflate(layoutInflater)
@@ -47,29 +53,48 @@ class GroupChatDetailsActivity : AppCompatActivity() {
         pleaseWaitDialog = Dialog(this)
         pleaseWaitDialog.setContentView(R.layout.dialog_loading)
         pleaseWaitDialog.show()
+        initializeRecyclerView()
+//        showLoader()
         initializeView()
         observers()
         listeners()
 
     }
 
+    private fun showLoader() {
+        if(isLoading) {
+            binding.chatDetailsProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.chatDetailsProgressBar.visibility = View.GONE
+        }
+    }
+
     private fun observers() {
         groupChatDetailViewModel.getUserInfoFromParticipantsStatus.observe(this, {
-            if (it) {
-                pleaseWaitDialog.dismiss()
-                initializeRecyclerView()
-            }
+            initializeRecyclerView()
+            pleaseWaitDialog.dismiss()
         })
 
         groupChatDetailViewModel.getAllMessageOfGroupStatus.observe(this, {
             if (it) {
-                if (this::groupChatDetailsAdapter.isInitialized) {
+                if(this::groupChatDetailsAdapter.isInitialized) {
+                    if(groupChatDetailViewModel.messageList.size != 0){
+                        offset = groupChatDetailViewModel
+                            .messageList[groupChatDetailViewModel.messageList.size - 1].sentTime
+                    }
                     groupChatDetailsAdapter.notifyDataSetChanged()
-//                    if(groupChatDetailsAdapter.itemCount != 0) {
-//                        groupDetailRecyclerView.smoothScrollToPosition(0)
-//                    }
                 }
             }
+        })
+
+        groupChatDetailViewModel.getGroupPagedMessageStatus.observe(this, { messageList ->
+            isLoading = false
+            for(message in messageList) {
+                groupChatDetailViewModel.messageList.add(message)
+                offset = message.sentTime
+            }
+            groupChatDetailsAdapter.notifyDataSetChanged()
+            showLoader()
         })
 
         groupChatDetailViewModel.groupChatImageUploadStatus.observe(this, { message ->
@@ -94,11 +119,29 @@ class GroupChatDetailsActivity : AppCompatActivity() {
         )
         groupDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
-//        linearLayoutManager.stackFromEnd = true
         linearLayoutManager.reverseLayout = true
         groupDetailRecyclerView.layoutManager = linearLayoutManager
         groupDetailRecyclerView.setHasFixedSize(true)
         groupDetailRecyclerView.adapter = groupChatDetailsAdapter
+
+        groupDetailRecyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                visibleItems = (groupDetailRecyclerView.layoutManager as LinearLayoutManager).childCount
+                totalItems = (groupDetailRecyclerView.layoutManager as LinearLayoutManager).itemCount
+                firstVisibleItem = (groupDetailRecyclerView.layoutManager as LinearLayoutManager)
+                    .findFirstVisibleItemPosition()
+
+                if(!isLoading) {
+                    if((visibleItems + firstVisibleItem) >= totalItems && firstVisibleItem >= 0) {
+                        isLoading = true
+                        if(offset != 0L) {
+                            groupChatDetailViewModel.getGroupChatPagedMessages(selectedGroup, offset)
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun initializeView() {

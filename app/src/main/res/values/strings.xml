@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">ChatApp</string>
     <string name="welcome_to_whatsapp">Welcome to ChatApp</string>
     <string name="send">Send</string>
     <string name="read_policy">Read our Privacy Policy. Tap “Agree &amp; Continue” to accept the Terms of Service.</string>
@@ -33,4 +32,6 @@
     <string name="type_a_message">Type a message</string>
     <string name="john_doe">John Doe</string>
     <string name="tap_here_for_the_group_info">Tap here for the group info</string>
+    <string name="app_name">ChatApp</string>
+    <string name="add_participants">Add participants</string>
 </resources>

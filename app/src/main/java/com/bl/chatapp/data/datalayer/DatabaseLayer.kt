@@ -280,4 +280,30 @@ class DatabaseLayer() {
             }
         }
     }
+
+    suspend fun getPagedMessages(currentUser: UserDetails, foreignUser: UserDetails, offset: Long) : ArrayList<Message>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val messageList = fireStoreDb.getPagedMessages(currentUser, foreignUser, offset)
+                messageList
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("DatabaseLayer","Paged messages fetch failed")
+                null
+            }
+        }
+    }
+
+    suspend fun getGroupChatPagedMessages(group: GroupInfo, offset: Long) : ArrayList<Message>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val messageList = fireStoreDb.getGroupChatPagedMessages(group, offset)
+                messageList
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("DatabaseLayer", "Paged messages fetch failed")
+                null
+            }
+        }
+    }
 }

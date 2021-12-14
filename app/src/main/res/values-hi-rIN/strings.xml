@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_to_whatsapp">चैटएप में आपका स्वागत है</string>
+    <string name="send">भेजना</string>
+    <string name="read_policy">हमारी गोपनीयता नीति पढ़ें। “सहमत और टैप करें; जारी रखें" सेवा की शर्तों को स्वीकार करने के लिए।</string>
+    <string name="from_name">चैट एप से</string>
+    <string name="invalid_phone_error">अवैध फोन नंबर</string>
+    <string name="blank_phone_number_error">कृपया 10 अंकों का फ़ोन नंबर दर्ज करें</string>
+    <string name="invalid_otp">अमान्य ओटीपी</string>
+    <string name="otp_edit_text_hint">- - - - - -</string>
+    <string name="phone_edit_text_hint">\tनंबर डालें</string>
+    <string name="resend_otp">ओटीपी पुनः भेजें</string>
+    <string name="ok">ठीक है</string>
+    <string name="set_your_status">अपनी स्थिति सेट करें</string>
+    <string name="enter_your_name">अपना नाम दर्ज करें</string>
+    <string name="chatapp">चैटएप</string>
+    <string name="add_profile_image">प्रोफ़ाइल छवि जोड़ें</string>
+    <string name="profile">प्रोफ़ाइल</string>
+    <string name="log_out">लॉग आउट</string>
+    <string name="change_profile_image">प्रोफ़ाइल छवि बदलें</string>
+    <string name="username_cannot_be_empty">उपयोगकर्ता नाम खाली नहीं हो सकता</string>
+    <string name="please_enter_username">अपने उपयोगकर्ता नाम दर्ज करें</string>
+    <string name="please_enter_current_status">कृपया अपनी वर्तमान स्थिति सेट करें</string>
+    <string name="storage_access_required_toast">अपलोड करने के लिए संग्रहण पहुंच आवश्यक है</string>
+    <string name="chats">चैट</string>
+    <string name="groups">समूहों</string>
+    <string name="something_went_wrong">कुछ गलत हो गया</string>
+    <string name="enter_otp">ओटीपी दर्ज करें</string>
+    <string name="new_group">नया समूह</string>
+    <string name="add_group_name">समूह का नाम जोड़ें</string>
+    <string name="enter_your_group_name_here">अपने समूह का नाम यहां दर्ज करें</string>
+    <string name="group_name_empty_error">समूह का नाम खाली नहीं हो सकता</string>
+    <string name="type_a_message">एक संदेश लिखें</string>
+    <string name="john_doe">जॉन डो</string>
+    <string name="tap_here_for_the_group_info">ग्रुप की जानकारी के लिए यहां टैप करें</string>
+    <string name="app_name">चैटएप</string>
+    <string name="add_participants">प्रतिभागियों को जोड़ें</string>
+</resources>
