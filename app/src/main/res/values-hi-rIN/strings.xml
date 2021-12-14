@@ -35,4 +35,5 @@
     <string name="tap_here_for_the_group_info">ग्रुप की जानकारी के लिए यहां टैप करें</string>
     <string name="app_name">चैटएप</string>
     <string name="add_participants">प्रतिभागियों को जोड़ें</string>
+    <string name="save">सुरक्षित करना</string>
 </resources>

@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class SharedViewModel : ViewModel() {
     private val databaseLayer = DatabaseLayer()
-    private val firebaseStorage = FirebaseStorage()
 
     private val _newUserAddStatus = MutableLiveData<UserDetails>()
     val newUserAddStatus = _newUserAddStatus as LiveData<UserDetails>
@@ -65,23 +64,14 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun setProfileImage(uri: Uri, userDetails: UserDetails){
+    fun updateUserProfileDetails(currentUser: UserDetails, latestUserName: String, latestStatus: String, imageUri: Uri?) {
         viewModelScope.launch {
-            try {
-                val resultUri = firebaseStorage.setProfileImage(uri, userDetails)
-                _setUserProfileImageStatus.postValue(resultUri)
-            } catch (e: Exception) {
-                Log.i("UserViewModel","firebase storage set profile image exception")
-                e.printStackTrace()
-                _setUserProfileImageStatus.postValue(null)
+            var profileImageUrl : String? = null
+            if(imageUri != null) {
+                profileImageUrl = databaseLayer.setProfileImageInCloud(imageUri, currentUser.uid)
             }
-
-        }
-    }
-
-    fun updateUserProfileDetails(userDetails: UserDetails) {
-        viewModelScope.launch {
-            val result = databaseLayer.updateProfileDetails(userDetails)
+            val result = databaseLayer.updateProfileDetails(latestUserName, latestStatus,
+                currentUser.uid, profileImageUrl?: currentUser.profileImageUrl)
             _updateUserStatusStatus.postValue(result)
         }
     }

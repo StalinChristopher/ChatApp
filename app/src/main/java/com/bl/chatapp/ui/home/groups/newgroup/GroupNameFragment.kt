@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -23,7 +24,7 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
     private lateinit var participantsList: ArrayList<String>
     private lateinit var currentUser: UserDetails
     private lateinit var pleaseWaitDialog: Dialog
-    private var groupImageUrl: String = ""
+    private var groupImageUri: Uri? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = GroupNameFragmentBinding.bind(view)
@@ -45,13 +46,6 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
                     "Group could not be created. Please try again", Toast.LENGTH_SHORT).show()
             }
             pleaseWaitDialog.dismiss()
-        })
-
-        newGroupViewModel.setGroupImageStatus.observe(viewLifecycleOwner, {
-            if(it != null) {
-                groupImageUrl = it
-                pleaseWaitDialog.dismiss()
-            }
         })
     }
 
@@ -81,7 +75,7 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
             if(groupName.isBlank()) {
                 binding.groupNameEditText.error = getString(R.string.group_name_empty_error)
             } else {
-                newGroupViewModel.createGroup(participantsList, groupName, groupImageUrl)
+                newGroupViewModel.createGroup(participantsList, groupName, groupImageUri)
                 pleaseWaitDialog.show()
             }
         }
@@ -121,8 +115,8 @@ class GroupNameFragment: Fragment(R.layout.group_name_fragment) {
             var imageUri = data.data
             pleaseWaitDialog.show()
             binding.groupImageView.setImageURI(imageUri)
-            newGroupViewModel.setGroupImage(imageUri!!)
-            pleaseWaitDialog.show()
+            groupImageUri = imageUri
+            pleaseWaitDialog.dismiss()
         }
     }
 

@@ -3,7 +3,6 @@ package com.bl.chatapp.ui.home.chats.chatdetails
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.chatapp.R
 import com.bl.chatapp.common.Constants.IMAGE
@@ -11,7 +10,6 @@ import com.bl.chatapp.common.Constants.VIEW_TYPE_IMAGE_RECEIVE
 import com.bl.chatapp.common.Constants.VIEW_TYPE_IMAGE_SENT
 import com.bl.chatapp.common.Constants.VIEW_TYPE_RECEIVE
 import com.bl.chatapp.common.Constants.VIEW_TYPE_SENT
-import com.bl.chatapp.common.MessagesDiffUtil
 import com.bl.chatapp.data.models.Message
 import com.bl.chatapp.ui.home.chats.chatdetails.viewholders.ReceiveImageMessageViewHolder
 import com.bl.chatapp.ui.home.chats.chatdetails.viewholders.ReceiveMessageViewHolder
@@ -86,11 +84,4 @@ class ChatDetailAdapter(
     override fun getItemCount(): Int {
         return messageList.size
     }
-
-    fun setData(newList: ArrayList<Message>) {
-        val diffUtil = MessagesDiffUtil(messageList, newList)
-        val diffResults = DiffUtil.calculateDiff(diffUtil)
-        diffResults.dispatchUpdatesTo(this)
-    }
-
 }

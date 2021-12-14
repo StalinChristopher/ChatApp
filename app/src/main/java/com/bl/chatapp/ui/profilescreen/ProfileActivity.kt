@@ -4,9 +4,11 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -28,9 +30,11 @@ class ProfileActivity : AppCompatActivity(){
     private lateinit var binding: ActivityProfilescreenBinding
     private lateinit var currentUser: UserDetails
     private lateinit var sharedViewModel: SharedViewModel
-    private lateinit var profileImageButton: CircleImageView
+    private lateinit var profileImageButton: ImageButton
+    private lateinit var profileImageView: CircleImageView
     private lateinit var updateButton: Button
     private lateinit var pleaseWaitDialog: Dialog
+    private var profileImageUri: Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
@@ -42,8 +46,9 @@ class ProfileActivity : AppCompatActivity(){
         pleaseWaitDialog = Dialog(this)
         pleaseWaitDialog.setContentView(R.layout.dialog_loading)
         pleaseWaitDialog.show()
-        profileImageButton = binding.profileImageButton
-        updateButton = binding.profileOkButton
+        profileImageButton = binding.profileChangeImageButton
+        profileImageView = binding.profileScreenImageView
+        updateButton = binding.profileSaveButton
         listeners()
     }
 
@@ -67,14 +72,13 @@ class ProfileActivity : AppCompatActivity(){
             if(Validator.verifyUserName(this, binding.profileUsername)) {
                 var latestUserName = binding.profileUsername.text.toString()
                 var latestStatus = binding.profileStatus.text.toString()
-                var updateUser = UserDetails(currentUser.uid, userName = latestUserName,
-                    status = latestStatus, phone = currentUser.phone,
-                    profileImageUrl = currentUser.profileImageUrl )
-                currentUser = updateUser
-                sharedViewModel.updateUserProfileDetails(updateUser)
+                sharedViewModel.updateUserProfileDetails(currentUser, latestUserName, latestStatus, profileImageUri)
                 pleaseWaitDialog.show()
             }
+        }
 
+        binding.profileScreenBackButton.setOnClickListener {
+            finish()
         }
     }
 
@@ -105,8 +109,9 @@ class ProfileActivity : AppCompatActivity(){
         if (requestCode == IMAGE_FROM_GALLERY_CODE && data != null) {
             var imageUri = data.data
             pleaseWaitDialog.show()
-            profileImageButton.setImageURI(imageUri)
-            sharedViewModel.setProfileImage(imageUri!!, currentUser)
+            profileImageView.setImageURI(imageUri)
+            profileImageUri = imageUri
+            pleaseWaitDialog.dismiss()
         }
     }
 
@@ -137,7 +142,7 @@ class ProfileActivity : AppCompatActivity(){
 
     private fun initializeProfile(user: UserDetails) {
         if(user.profileImageUrl.isNotEmpty()) {
-            Glide.with(this).load(user.profileImageUrl).dontAnimate().into(profileImageButton)
+            Glide.with(this).load(user.profileImageUrl).dontAnimate().into(profileImageView)
         }
         binding.profileUsername.setText(user.userName)
         binding.profileStatus.setText(user.status)
