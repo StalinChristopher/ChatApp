@@ -33,9 +33,13 @@ class NewGroupViewModel: ViewModel() {
         }
     }
 
-    fun createGroup(participants: ArrayList<String>, groupName: String, groupImageUrl: String) {
+    fun createGroup(participants: ArrayList<String>, groupName: String, imageUri: Uri?) {
         viewModelScope.launch {
-            val status = DatabaseLayer().createGroup(participants, groupName, groupImageUrl)
+            var groupImageUrl: String? = null
+            if(imageUri != null) {
+                groupImageUrl = databaseLayer.setGroupImageInCloud(imageUri)
+            }
+            val status = databaseLayer.createGroup(participants, groupName, groupImageUrl ?: "")
             if(status) {
                 _groupCreatedStatus.postValue(true)
             }

@@ -139,43 +139,6 @@ class FirebaseDatabaseService {
         }
     }
 
-    suspend fun getUserListFromDb(user: UserDetails): ArrayList<UserDetails> {
-        return suspendCoroutine { callback ->
-            db.collection(FIREBASE_USERS_COLLECTION).get().addOnCompleteListener { task ->
-                if (task.isSuccessful && task.result != null) {
-                    var userList = ArrayList<UserDetails>()
-                    val dataSnapshot = task.result
-                    if (dataSnapshot != null) {
-                        for (item in dataSnapshot.documents) {
-                            if (user.uid == item.id) {
-                                continue
-                            } else {
-                                val userMap = item.data as HashMap<*, *>
-                                val userName = userMap[FIREBASE_USERNAME].toString()
-                                val status = userMap[FIREBASE_STATUS].toString()
-                                val phone = userMap[FIREBASE_PHONE].toString()
-                                val profileImageUrl = userMap[FIREBASE_PROFILE_IMAGE_URL].toString()
-                                val uid = item.id
-                                val userFromDb = UserDetails(
-                                    userName = userName, status = status, phone = phone,
-                                    profileImageUrl = profileImageUrl, uid = uid
-                                )
-                                userList.add(userFromDb)
-                            }
-                        }
-                        callback.resumeWith(Result.success(userList))
-                    } else {
-                        Log.e(TAG, "No users present")
-                        callback.resumeWith((Result.failure(task.exception!!)))
-                    }
-                } else {
-                    Log.i(TAG, "Users could not be fetched")
-                    callback.resumeWith(Result.failure(task.exception!!))
-                }
-            }
-        }
-    }
-
     suspend fun sendMessage(
         currentUser: UserDetails,
         foreignUser: UserDetails,

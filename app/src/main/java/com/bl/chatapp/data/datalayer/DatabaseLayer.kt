@@ -5,7 +5,10 @@ import android.util.Log
 import com.bl.chatapp.authservice.FirebaseAuthentication
 import com.bl.chatapp.common.Constants.FIREBASE_CHAT_IMAGES
 import com.bl.chatapp.common.Constants.FIREBASE_GROUP_CHAT_IMAGES
+import com.bl.chatapp.common.Constants.FIREBASE_PROFILE_IMAGE_URL
+import com.bl.chatapp.common.Constants.FIREBASE_STATUS
 import com.bl.chatapp.common.Constants.FIREBASE_TOKEN
+import com.bl.chatapp.common.Constants.FIREBASE_USERNAME
 import com.bl.chatapp.common.Constants.IMAGE
 import com.bl.chatapp.common.Utilities
 import com.bl.chatapp.data.models.Chat
@@ -71,10 +74,15 @@ class DatabaseLayer() {
         }
     }
 
-    suspend fun updateProfileDetails(user: UserDetails) : Boolean{
+    suspend fun updateProfileDetails(latestUserName: String, latestStatus: String, uid: String, profileImageUrl: String) : Boolean{
         return withContext(Dispatchers.IO) {
             try {
-                val status  = fireStoreDb.updateUserInfoFromDatabase(user)
+                val updateMap = mapOf(
+                    FIREBASE_USERNAME to latestUserName,
+                    FIREBASE_STATUS to latestStatus,
+                    FIREBASE_PROFILE_IMAGE_URL to profileImageUrl
+                )
+                fireStoreDb.updateFieldsOfDocument(uid, updateMap)
                 true
             } catch (e: Exception) {
                 Log.e("DatabaseLayer", "update error")
@@ -256,6 +264,20 @@ class DatabaseLayer() {
         return withContext(Dispatchers.IO) {
             try {
                 val resultUrl = firebaseStorage.setGroupImage(imageUri)
+                resultUrl
+            } catch (e: Exception) {
+                Log.e("DatabaseLayer", "upload image failed exception")
+                e.printStackTrace()
+                null
+            }
+
+        }
+    }
+
+    suspend fun setProfileImageInCloud(imageUri: Uri, uid: String): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val resultUrl = firebaseStorage.setProfileImage(imageUri, uid)
                 resultUrl
             } catch (e: Exception) {
                 Log.e("DatabaseLayer", "upload image failed exception")

@@ -207,11 +207,7 @@ class ChatDetailsActivity : AppCompatActivity() {
                 offset = chatDetailViewModel
                     .messageList[chatDetailViewModel.messageList.size - 1].sentTime
                 chatDetailAdapter.notifyDataSetChanged()
-//            chatDetailAdapter.setData(it)
-//            chatDetailViewModel.messageList = it
             }
-
-
         })
 
         chatDetailViewModel.chatImageUploadStatus.observe(this, { message ->

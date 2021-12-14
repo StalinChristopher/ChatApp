@@ -16,20 +16,18 @@ import kotlin.coroutines.suspendCoroutine
 class FirebaseStorage() {
     private var storageRef = Firebase.storage.reference
     
-    suspend fun setProfileImage(uri: Uri, userDetails: UserDetails): Uri {
+    suspend fun setProfileImage(uri: Uri, uid: String): String {
         return suspendCoroutine { callback ->
             var urlImage: String
             val profileImageRef =
                 storageRef.child(FIREBASE_PROFILE_IMAGES_).child(FIREBASE_USERS_COLLECTION)
-                    .child(userDetails.uid)
-                    .child("profileImage.webp")
+                    .child("$uid.webp")
             profileImageRef.putFile(uri).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i("Storage", "Upload image complete")
                     profileImageRef.downloadUrl.addOnSuccessListener { task ->
                         urlImage = task.toString()
-                        Log.i("Storage", urlImage)
-                        callback.resumeWith(Result.success(task))
+                        callback.resumeWith(Result.success(urlImage))
                     }
                     Log.i("Storage", "url fetch failed")
                 } else {
@@ -67,8 +65,7 @@ class FirebaseStorage() {
             var urlImage: String
             val imageId = UUID.randomUUID()
             val profileImageRef =
-                storageRef.child(FIREBASE_GROUP_PROFILE_IMAGE).child(imageId.toString())
-                    .child("groupImage.webp")
+                storageRef.child(FIREBASE_GROUP_PROFILE_IMAGE).child("${imageId}.webp")
             profileImageRef.putFile(uri).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i("Storage", "Upload image complete")
