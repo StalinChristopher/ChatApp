@@ -21,6 +21,7 @@ object Constants {
     const val FIREBASE_STATUS = "status"
     const val FIREBASE_PHONE = "phoneNumber"
     const val FIREBASE_PROFILE_IMAGE_URL = "profileImageUrl"
+    const val FIREBASE_TOKEN = "firebaseToken"
     const val VIEW_TYPE_SENT = 1
     const val VIEW_TYPE_RECEIVE = 2
     const val VIEW_TYPE_IMAGE_SENT = 3
@@ -33,6 +34,7 @@ object Constants {
     const val FIREBASE_GROUP_CHATS_COLLECTION = "groupChat"
 
     //firebase storage
+    const val FIREBASE_GROUP_PROFILE_IMAGE = "groupProfileImages"
     const val FIREBASE_PROFILE_IMAGES_ = "profileImages"
     const val FIREBASE_CHAT_IMAGES = "chat_images"
     const val FIREBASE_GROUP_CHAT_IMAGES = "group_chat_images"
@@ -56,6 +58,11 @@ object Constants {
     //view image activity
     const val VIEW_IMAGE_ACTIVITY_REQUEST_CODE = 113
     const val VIEW_IMAGE_ACTIVITY_RESULT_CODE = 0
+
+    //firebase messaging token sharedPref key
+    const val FIREBASE_MESSAGING_TOKEN_SHAREDPREF = "FirebaseMessagingToken"
+
+    const val FIREBASE_MESSAGING_SENDER_API_KEY = "key=AAAAApSY3m4:APA91bHoxBLm5EL71AJUFSD8PmCCqMVvhy259clIiIjqUUmVVXng_h2Cr0mVUgPOOJe_y6V4PkZLLLXK2EP4LvDfAtQLckb7kcVc6_hQZGI-PEKoq47aksSqbTWlIyxvuNe7CPtpSzmp"
 
 
 

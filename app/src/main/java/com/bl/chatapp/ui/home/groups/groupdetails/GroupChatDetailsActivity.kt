@@ -23,6 +23,7 @@ import com.bl.chatapp.databinding.ActivityChatDetailsBinding
 import com.bl.chatapp.ui.view_mage.ViewImageActivity
 import com.bl.chatapp.viewmodels.ViewModelFactory
 import com.bl.chatapp.wrappers.UserDetails
+import com.bumptech.glide.Glide
 
 class GroupChatDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatDetailsBinding
@@ -64,13 +65,23 @@ class GroupChatDetailsActivity : AppCompatActivity() {
             if (it) {
                 if (this::groupChatDetailsAdapter.isInitialized) {
                     groupChatDetailsAdapter.notifyDataSetChanged()
+                    if(groupChatDetailsAdapter.itemCount != 0) {
+                        groupDetailRecyclerView.smoothScrollToPosition(0)
+                    }
                 }
             }
         })
 
-        groupChatDetailViewModel.groupChatImageUploadStatus.observe(this, {
-            if(it) {
+        groupChatDetailViewModel.groupChatImageUploadStatus.observe(this, { message ->
+            if(message != null) {
                 pleaseWaitDialog.dismiss()
+                groupChatDetailViewModel.sendGroupNotifications(message)
+            }
+        })
+
+        groupChatDetailViewModel.sendMessageToGroupStatus.observe(this, { message ->
+            if(message != null) {
+                groupChatDetailViewModel.sendGroupNotifications(message)
             }
         })
     }
@@ -84,6 +95,7 @@ class GroupChatDetailsActivity : AppCompatActivity() {
         groupDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.reverseLayout = true
         groupDetailRecyclerView.layoutManager = linearLayoutManager
         groupDetailRecyclerView.setHasFixedSize(true)
         groupDetailRecyclerView.adapter = groupChatDetailsAdapter
@@ -91,7 +103,11 @@ class GroupChatDetailsActivity : AppCompatActivity() {
 
     private fun initializeView() {
         binding.chatDetailReceiverTextView.text = selectedGroup.groupName
-        binding.chatDetailProfileImage.setImageResource(R.drawable.whatsapp_group_user)
+        if(selectedGroup.groupImageUrl.isNotBlank()) {
+            Glide.with(this).load(selectedGroup.groupImageUrl).into(binding.chatDetailProfileImage)
+        } else {
+            binding.chatDetailProfileImage.setImageResource(R.drawable.whatsapp_group_user)
+        }
     }
 
     private fun listeners() {

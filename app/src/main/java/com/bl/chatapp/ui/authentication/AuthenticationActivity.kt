@@ -36,7 +36,7 @@ class AuthenticationActivity : AppCompatActivity() {
     }
 
     fun gotoHomeActivity(userId: String) {
-        val userDetails = UserDetails(userId, false)
+        val userDetails = UserDetails(userId, newUser = false)
         val intent = Intent(this, HomeActivity::class.java)
         intent.putExtra(Constants.USER_DETAILS, userDetails)
         finish()

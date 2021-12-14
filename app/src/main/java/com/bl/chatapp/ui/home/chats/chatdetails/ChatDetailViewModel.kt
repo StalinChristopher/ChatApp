@@ -6,8 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bl.chatapp.common.Constants.IMAGE
 import com.bl.chatapp.data.models.Message
-import com.bl.chatapp.data.services.DatabaseLayer
+import com.bl.chatapp.data.datalayer.DatabaseLayer
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,14 +23,14 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
     val messageList = ArrayList<Message>()
     private val databaseLayer = DatabaseLayer()
 
-    private val _sendMessageStatus = MutableLiveData<Boolean>()
-    val sendMessageStatus = _sendMessageStatus as LiveData<Boolean>
+    private val _sendMessageStatus = MutableLiveData<Message>()
+    val sendMessageStatus = _sendMessageStatus as LiveData<Message>
 
     private val _getMessageListStatus = MutableLiveData<Boolean>()
     val getMessageListStatus = _getMessageListStatus as LiveData<Boolean>
 
-    private val _chatImageUploadStatus = MutableLiveData<Boolean>()
-    val chatImageUploadStatus = _chatImageUploadStatus as LiveData<Boolean>
+    private val _chatImageUploadStatus = MutableLiveData<Message>()
+    val chatImageUploadStatus = _chatImageUploadStatus as LiveData<Message>
 
     init {
         getMessages(currentUser, foreignUser)
@@ -43,9 +44,9 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
             val cal = Calendar.getInstance()
             val time = cal.timeInMillis
             var messageWrapper = MessageWrapper(messageText, time, messageType)
-            val resultStatus = databaseLayer.sendNewMessage(currentUser, foreignUser, messageWrapper)
-            if (resultStatus) {
-                _sendMessageStatus.postValue(resultStatus)
+            val resultMessage = databaseLayer.sendNewMessage(currentUser, foreignUser, messageWrapper)
+            if (resultMessage != null) {
+                _sendMessageStatus.postValue(resultMessage)
             }
         }
     }
@@ -56,6 +57,7 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
             databaseLayer.getMessageList(currentUser, foreignUser).collect {
                 messageList.clear()
                 messageList.addAll(it as ArrayList<Message>)
+                messageList.reverse()
                 _getMessageListStatus.postValue(true)
             }
         }
@@ -70,9 +72,19 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
     fun uploadChatImageToCloud(imageUri: Uri) {
         viewModelScope.launch {
             val result = databaseLayer.uploadChatImageToCloud(imageUri, currentUser, foreignUser)
-            if(result) {
+            if(result != null) {
                 Log.i("ChatDetailViewModel", "Image uploaded successfully and message sent")
-                _chatImageUploadStatus.postValue(true)
+                _chatImageUploadStatus.postValue(result)
+            }
+        }
+    }
+
+    fun sendPushNotification(message: Message) {
+        viewModelScope.launch {
+            if(message.messageType == IMAGE) {
+                databaseLayer.sendNotificationToUser(foreignUser.firebaseTokenId, currentUser.userName, "", message.content)
+            } else {
+                databaseLayer.sendNotificationToUser(foreignUser.firebaseTokenId, currentUser.userName, message.content, "")
             }
         }
     }

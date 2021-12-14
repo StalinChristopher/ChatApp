@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bl.chatapp.data.services.DatabaseLayer
-import com.bl.chatapp.data.services.FirebaseStorage
+import com.bl.chatapp.data.datalayer.DatabaseLayer
+import com.bl.chatapp.firebase.FirebaseStorage
 import com.bl.chatapp.wrappers.UserDetails
 import kotlinx.coroutines.launch
 
@@ -31,8 +31,9 @@ class SharedViewModel : ViewModel() {
     val userInfoFromIdStatus = _userInfoFromIdStatus as LiveData<UserDetails>
 
     fun setUserData(userName: String,
-                    statusText: String, userDetails: UserDetails) {
+                    statusText: String, firebaseToken :String, userDetails: UserDetails) {
         viewModelScope.launch {
+            userDetails.firebaseTokenId = firebaseToken
             userDetails.userName = userName
             userDetails.status = statusText
             val user = databaseLayer.addUserInfoToDatabase(userDetails)
@@ -42,12 +43,16 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun getUserData(userDetails: UserDetails) {
+    fun getUserData(userDetails: UserDetails, token: String) {
         viewModelScope.launch {
             val user = databaseLayer.getUserInfoFromDatabase(userDetails)
             if(user != null) {
-                _getUserInfoStatus.postValue(user)
+                val updateUser = databaseLayer.updateUserTokenInFirestore(user, token)
+                if(updateUser != null) {
+                    _getUserInfoStatus.postValue(updateUser)
+                }
             }
+
         }
     }
 
@@ -81,4 +86,9 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    fun logOut(uid: String) {
+        viewModelScope.launch {
+            databaseLayer.logOutFromTheApp(uid)
+        }
+    }
 }

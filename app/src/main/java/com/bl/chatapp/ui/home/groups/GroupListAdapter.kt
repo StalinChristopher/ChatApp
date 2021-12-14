@@ -34,7 +34,12 @@ class GroupListAdapter(
 
         fun setUserInfo(context: Context, group: GroupInfo) {
             groupName.text = group.groupName
-            profileImage.setImageResource(R.drawable.whatsapp_group_user)
+            if(group.groupImageUrl.isNotBlank()) {
+                Glide.with(context).load(group.groupImageUrl).into(profileImage)
+            } else {
+                profileImage.setImageResource(R.drawable.whatsapp_group_user)
+            }
+
         }
 
         init {

@@ -1,5 +1,6 @@
 package com.bl.chatapp.ui.authentication
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,6 +15,7 @@ import com.bl.chatapp.viewmodels.ViewModelFactory
 class LoginScreenFragment : Fragment(R.layout.login_fragment) {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: LoginFragmentBinding
+    private lateinit var pleaseWaitDialog: Dialog
     private var mobileNumber: String = ""
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,6 +24,8 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
             requireActivity(),
             ViewModelFactory(LoginViewModel())
         )[LoginViewModel::class.java]
+        pleaseWaitDialog = Dialog(requireContext())
+        pleaseWaitDialog.setContentView(R.layout.dialog_loading)
         login()
         observers()
     }
@@ -41,7 +45,9 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
                     var code = countryCodePicker.selectedCountryCodeWithPlus
                     mobileNumber = "$code$phoneNumber"
                     Log.i("login", mobileNumber)
+                    pleaseWaitDialog.show()
                     loginViewModel.loginWithPhoneNumber(requireActivity(), mobileNumber, true)
+
 
                 }
             }
@@ -51,6 +57,7 @@ class LoginScreenFragment : Fragment(R.layout.login_fragment) {
     private fun observers() {
         loginViewModel.gotoOtpVerificationPageStatus.observe(viewLifecycleOwner) {
             if (it) {
+                pleaseWaitDialog.dismiss()
                 gotoOtpFragment()
             }
         }

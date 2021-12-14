@@ -6,9 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bl.chatapp.common.Constants.IMAGE
 import com.bl.chatapp.data.models.GroupInfo
 import com.bl.chatapp.data.models.Message
-import com.bl.chatapp.data.services.DatabaseLayer
+import com.bl.chatapp.data.datalayer.DatabaseLayer
 import com.bl.chatapp.wrappers.MessageWrapper
 import com.bl.chatapp.wrappers.UserDetails
 import kotlinx.coroutines.flow.collect
@@ -25,8 +26,8 @@ class GroupChatDetailViewModel(
     val memberList = ArrayList<UserDetails>()
     private val databaseLayer = DatabaseLayer()
 
-    private val _sendMessageToGroupStatus = MutableLiveData<Boolean>()
-    val sendMessageToGroupStatus = _sendMessageToGroupStatus as LiveData<Boolean>
+    private val _sendMessageToGroupStatus = MutableLiveData<Message>()
+    val sendMessageToGroupStatus = _sendMessageToGroupStatus as LiveData<Message>
 
     private val _getAllMessagesOfGroupStatus = MutableLiveData<Boolean>()
     val getAllMessageOfGroupStatus = _getAllMessagesOfGroupStatus as LiveData<Boolean>
@@ -34,8 +35,8 @@ class GroupChatDetailViewModel(
     private val _getUserInfoFromParticipantsStatus = MutableLiveData<Boolean>()
     val getUserInfoFromParticipantsStatus = _getUserInfoFromParticipantsStatus as LiveData<Boolean>
 
-    private val _groupChatImageUploadStatus = MutableLiveData<Boolean>()
-    val groupChatImageUploadStatus = _groupChatImageUploadStatus as LiveData<Boolean>
+    private val _groupChatImageUploadStatus = MutableLiveData<Message>()
+    val groupChatImageUploadStatus = _groupChatImageUploadStatus as LiveData<Message>
 
     init {
         getALlMessagesOfGroup(selectedGroup)
@@ -52,10 +53,10 @@ class GroupChatDetailViewModel(
             val cal = Calendar.getInstance()
             val time = cal.timeInMillis
             var messageWrapper = MessageWrapper(messageText, time, messageType)
-            val status =
+            val resultMessage =
                 databaseLayer.sendNewMessageToGroup(currentUser, selectedGroup, messageWrapper)
-            if (status) {
-                _sendMessageToGroupStatus.postValue(true)
+            if (resultMessage != null) {
+                _sendMessageToGroupStatus.postValue(resultMessage)
             }
         }
     }
@@ -65,6 +66,7 @@ class GroupChatDetailViewModel(
             databaseLayer.getMessageListOfGroup(group).collect {
                 messageList.clear()
                 messageList.addAll(it as ArrayList<Message>)
+                messageList.reverse()
                 _getAllMessagesOfGroupStatus.postValue(true)
 
             }
@@ -82,10 +84,28 @@ class GroupChatDetailViewModel(
 
     fun uploadGroupChatImage(imageUri: Uri) {
         viewModelScope.launch {
-            val result = databaseLayer.uploadGroupImageToCloud(imageUri, selectedGroup, currentUser)
-            if(result) {
+            val resultMessage = databaseLayer.uploadGroupImageToCloud(imageUri, selectedGroup, currentUser)
+            if(resultMessage != null ) {
                 Log.i("ChatDetailViewModel", "Image uploaded successfully and message sent")
-                _groupChatImageUploadStatus.postValue(true)
+                _groupChatImageUploadStatus.postValue(resultMessage)
+            }
+        }
+    }
+
+    fun sendGroupNotifications(message: Message) {
+        viewModelScope.launch {
+            var membersTokenList = ArrayList<String>()
+            Log.i("GroupChatDetailViewModel","$memberList")
+            memberList.forEach {
+                if(it.uid != currentUser.uid) {
+                    membersTokenList.add(it.firebaseTokenId)
+                }
+            }
+            Log.i("GroupChatDetailViewModel","$membersTokenList")
+            if(message.messageType == IMAGE) {
+                databaseLayer.sendNotificationToGroup(membersTokenList, currentUser.userName, "", message.content)
+            } else {
+                databaseLayer.sendNotificationToGroup(membersTokenList, currentUser.userName, message.content, "")
             }
         }
     }

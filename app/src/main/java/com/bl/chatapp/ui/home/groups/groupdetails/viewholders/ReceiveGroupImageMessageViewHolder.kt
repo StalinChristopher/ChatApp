@@ -21,6 +21,5 @@ class ReceiveGroupImageMessageViewHolder(itemView: View): RecyclerView.ViewHolde
                 }
             }
             Glide.with(context).load(message.content).into(imageView)
-
         }
     }
