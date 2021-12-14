@@ -295,19 +295,19 @@ class FirebaseDatabaseService {
     @ExperimentalCoroutinesApi
     fun getMessages(currentUser: UserDetails, foreignUser: UserDetails) : Flow<ArrayList<Message>?> {
         return callbackFlow {
-            val messageList = ArrayList<Message>()
             val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
             val listenerRef = db.collection(FIREBASE_CHATS_COLLECTION).document(chatId)
-                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME).addSnapshotListener { snapshot, error ->
+                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME, Query.Direction.DESCENDING)
+                .limit(10).addSnapshotListener { snapshot, error ->
                 if(error != null) {
-                    this.offer(null)
+                    this.trySend(null)
                     Log.e(TAG, "snapshot listener error")
                     error.printStackTrace()
                 } else {
                     if(snapshot != null) {
-                        for(doc in snapshot.documentChanges) {
-                            if(doc.type == DocumentChange.Type.ADDED) {
-                                val data = doc.document
+                        val messageList = ArrayList<Message>()
+                        for(doc in snapshot.documents) {
+                            val data = doc.data as HashMap<*, *>
                                 val message = Message(
                                     data[MESSAGE_ID].toString(),
                                     data[SENDER_ID].toString(),
@@ -316,9 +316,8 @@ class FirebaseDatabaseService {
                                     data[MESSAGE_TYPE].toString()
                                 )
                                 messageList.add(message)
-                            }
                         }
-                        this.offer(messageList)
+                        this.trySend(messageList)
                     } else {
                         Log.e(TAG,"snapshot is null error")
                     }
@@ -452,29 +451,28 @@ class FirebaseDatabaseService {
 
     fun getAllMessagesOfGroup(group: GroupInfo): Flow<ArrayList<Message>?> {
         return callbackFlow {
-            val messageList = ArrayList<Message>()
             val listenerRef = db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document(group.groupId)
-                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME).addSnapshotListener { snapshot, error ->
+                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME, Query.Direction.DESCENDING)
+                .limit(10).addSnapshotListener { snapshot, error ->
                     if(error != null) {
-                        this.offer(null)
+                        this.trySend(null)
                         Log.e(TAG, "snapshot listener error")
                         error.printStackTrace()
                     } else {
                         if(snapshot != null) {
-                            for(doc in snapshot.documentChanges) {
-                                if(doc.type == DocumentChange.Type.ADDED) {
-                                    val data = doc.document
-                                    val message = Message(
-                                        data[MESSAGE_ID].toString(),
-                                        data[SENDER_ID].toString(),
-                                        data[SENT_TIME] as Long,
-                                        data[CONTENT].toString(),
-                                        data[MESSAGE_TYPE].toString()
-                                    )
-                                    messageList.add(message)
-                                }
+                            val messageList = ArrayList<Message>()
+                            for(doc in snapshot.documents) {
+                                val data = doc.data as HashMap<*,*>
+                                val message = Message(
+                                    data[MESSAGE_ID].toString(),
+                                    data[SENDER_ID].toString(),
+                                    data[SENT_TIME] as Long,
+                                    data[CONTENT].toString(),
+                                    data[MESSAGE_TYPE].toString()
+                                )
+                                messageList.add(message)
                             }
-                            this.offer(messageList)
+                            this.trySend(messageList)
                         } else {
                             Log.e(TAG,"snapshot is null error")
                         }
@@ -495,6 +493,67 @@ class FirebaseDatabaseService {
                     callback.resumeWith(Result.failure(it.exception!!))
                 }
             }
+        }
+    }
+
+    suspend fun getPagedMessages(currentUser: UserDetails, foreignUser: UserDetails, offset: Long): ArrayList<Message> {
+        return suspendCoroutine { callback ->
+            val chatId = Utilities.createChatId(currentUser.uid, foreignUser.uid)
+            db.collection(FIREBASE_CHATS_COLLECTION).document(chatId)
+                .collection(
+                FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME, Query.Direction.DESCENDING)
+                .startAfter(offset).limit(10).get()
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful) {
+                        val messageList = arrayListOf<Message>()
+                        val snapshot = task.result
+                        if(snapshot != null) {
+                            for(item in snapshot.documents) {
+                                val data  = item.data as HashMap<*,*>
+                                val message = Message(
+                                    data[MESSAGE_ID].toString(),
+                                    data[SENDER_ID].toString(),
+                                    data[SENT_TIME] as Long,
+                                    data[CONTENT].toString(),
+                                    data[MESSAGE_TYPE].toString()
+                                )
+                                messageList.add(message)
+                            }
+                            callback.resumeWith(Result.success(messageList))
+                        }
+                    } else {
+                        callback.resumeWith(Result.failure(task.exception!!))
+                    }
+                }
+        }
+    }
+
+    suspend fun getGroupChatPagedMessages(group: GroupInfo, offset: Long) : ArrayList<Message> {
+        return suspendCoroutine { callback ->
+            db.collection(FIREBASE_GROUP_CHATS_COLLECTION).document(group.groupId)
+                .collection(FIREBASE_MESSAGES_COLLECTION).orderBy(SENT_TIME, Query.Direction.DESCENDING)
+                .startAfter(offset).limit(10).get().addOnCompleteListener { task ->
+                    if(task.isSuccessful) {
+                        val messageList = arrayListOf<Message>()
+                        val snapshot = task.result
+                        if(snapshot != null) {
+                            for(item in snapshot.documents) {
+                                val data  = item.data as HashMap<*,*>
+                                val message = Message(
+                                    data[MESSAGE_ID].toString(),
+                                    data[SENDER_ID].toString(),
+                                    data[SENT_TIME] as Long,
+                                    data[CONTENT].toString(),
+                                    data[MESSAGE_TYPE].toString()
+                                )
+                                messageList.add(message)
+                            }
+                            callback.resumeWith(Result.success(messageList))
+                        }
+                    } else {
+                        callback.resumeWith(Result.failure(task.exception!!))
+                    }
+                }
         }
     }
 }

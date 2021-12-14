@@ -53,12 +53,13 @@
             android:id="@+id/otp_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:maxLength="6"
             android:background="@null"
             android:fontFamily="@font/poppins_light"
             android:gravity="center"
             android:hint="@string/otp_edit_text_hint"
             android:textColor="@color/white"
-            android:textColorHint="@color/white"/>
+            android:textColorHint="@color/white" />
     </RelativeLayout>
 
     <TextView
@@ -87,10 +88,12 @@
         android:fontFamily="@font/poppins_light"
         android:text="@string/send"
         android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resend_textView" />
+        app:layout_constraintTop_toBottomOf="@+id/resend_textView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView2"

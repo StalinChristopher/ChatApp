@@ -41,6 +41,11 @@ class ChatDetailsActivity : AppCompatActivity() {
     private lateinit var chatDetailAdapter: ChatDetailAdapter
     private lateinit var chatDetailRecyclerView: RecyclerView
     private lateinit var pleaseWaitDialog: Dialog
+    private var offset = 0L
+    private var isLoading = false
+    private var visibleItems: Int = 0
+    private var totalItems = 0
+    private var firstVisibleItem = 0
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,11 +74,33 @@ class ChatDetailsActivity : AppCompatActivity() {
         chatDetailRecyclerView = binding.chatDetailRecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.stackFromEnd = false
         chatDetailRecyclerView.layoutManager = linearLayoutManager
         chatDetailRecyclerView.setHasFixedSize(true)
         chatDetailRecyclerView.adapter = chatDetailAdapter
+        chatDetailRecyclerView.post {chatDetailRecyclerView.smoothScrollToPosition(0)}
+
+        chatDetailRecyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                visibleItems = (chatDetailRecyclerView.layoutManager as LinearLayoutManager).childCount
+                totalItems = (chatDetailRecyclerView.layoutManager as LinearLayoutManager).itemCount
+                firstVisibleItem = (chatDetailRecyclerView.layoutManager as LinearLayoutManager)
+                    .findFirstVisibleItemPosition()
+
+                if(!isLoading) {
+                    if((visibleItems + firstVisibleItem) >= totalItems && firstVisibleItem >= 0) {
+                        isLoading = true
+                        showLoader()
+                        if(offset != 0L) {
+                            chatDetailViewModel.getPagedMessages(currentUser, foreignUser, offset)
+                        }
+                    }
+                }
+            }
+        })
     }
+
 
     private fun initializeView() {
         binding.chatDetailGroupMembersLabel.visibility = View.GONE
@@ -114,6 +141,20 @@ class ChatDetailsActivity : AppCompatActivity() {
                 )
             }
         }
+
+        binding.chatDetailProfileImage.setOnClickListener {
+            gotoForeignUserScreen(foreignUser)
+        }
+
+        binding.chatDetailReceiverTextView.setOnClickListener {
+            gotoForeignUserScreen(foreignUser)
+        }
+    }
+
+    private fun gotoForeignUserScreen(foreignUser: UserDetails) {
+        val intent = Intent(this, ViewForeignUserActivity::class.java)
+        intent.putExtra(FOREIGN_USER, foreignUser)
+        startActivity(intent)
     }
 
     private fun selectImageFromGallery() {
@@ -161,10 +202,15 @@ class ChatDetailsActivity : AppCompatActivity() {
     @ExperimentalCoroutinesApi
     private fun observers() {
         chatDetailViewModel.getMessageListStatus.observe(this, {
-            chatDetailAdapter.notifyDataSetChanged()
-            if (chatDetailAdapter.itemCount != 0) {
-                chatDetailRecyclerView.smoothScrollToPosition(0)
+            if(chatDetailViewModel.messageList.size != 0) {
+                isLoading = false
+                offset = chatDetailViewModel
+                    .messageList[chatDetailViewModel.messageList.size - 1].sentTime
+                chatDetailAdapter.notifyDataSetChanged()
+//            chatDetailAdapter.setData(it)
+//            chatDetailViewModel.messageList = it
             }
+
 
         })
 
@@ -180,5 +226,23 @@ class ChatDetailsActivity : AppCompatActivity() {
                 chatDetailViewModel.sendPushNotification(message)
             }
         })
+
+        chatDetailViewModel.getPagedMessageStatus.observe(this, { messageList ->
+            isLoading = false
+            for(message in messageList) {
+                chatDetailViewModel.messageList.add(message)
+                offset = message.sentTime
+            }
+            chatDetailAdapter.notifyDataSetChanged()
+            showLoader()
+        })
+    }
+
+    private fun showLoader() {
+        if(isLoading) {
+            binding.chatDetailsProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.chatDetailsProgressBar.visibility = View.GONE
+        }
     }
 }

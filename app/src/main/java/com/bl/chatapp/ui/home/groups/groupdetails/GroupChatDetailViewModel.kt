@@ -38,6 +38,9 @@ class GroupChatDetailViewModel(
     private val _groupChatImageUploadStatus = MutableLiveData<Message>()
     val groupChatImageUploadStatus = _groupChatImageUploadStatus as LiveData<Message>
 
+    private val _getGroupPagedMessagesStatus = MutableLiveData<ArrayList<Message>>()
+    val getGroupPagedMessageStatus = _getGroupPagedMessagesStatus as LiveData<ArrayList<Message>>
+
     init {
         getALlMessagesOfGroup(selectedGroup)
         getUsersInfoFromParticipants(selectedGroup.participants)
@@ -65,8 +68,9 @@ class GroupChatDetailViewModel(
         viewModelScope.launch {
             databaseLayer.getMessageListOfGroup(group).collect {
                 messageList.clear()
-                messageList.addAll(it as ArrayList<Message>)
-                messageList.reverse()
+                if (it != null) {
+                    messageList.addAll(it)
+                }
                 _getAllMessagesOfGroupStatus.postValue(true)
 
             }
@@ -94,7 +98,7 @@ class GroupChatDetailViewModel(
 
     fun sendGroupNotifications(message: Message) {
         viewModelScope.launch {
-            var membersTokenList = ArrayList<String>()
+            val membersTokenList = ArrayList<String>()
             Log.i("GroupChatDetailViewModel","$memberList")
             memberList.forEach {
                 if(it.uid != currentUser.uid) {
@@ -106,6 +110,15 @@ class GroupChatDetailViewModel(
                 databaseLayer.sendNotificationToGroup(membersTokenList, currentUser.userName, "", message.content)
             } else {
                 databaseLayer.sendNotificationToGroup(membersTokenList, currentUser.userName, message.content, "")
+            }
+        }
+    }
+
+    fun getGroupChatPagedMessages(group: GroupInfo, offset: Long) {
+        viewModelScope.launch {
+            val pagedGroupMessages = databaseLayer.getGroupChatPagedMessages(group, offset)
+            if(pagedGroupMessages != null) {
+                _getGroupPagedMessagesStatus.postValue(pagedGroupMessages)
             }
         }
     }

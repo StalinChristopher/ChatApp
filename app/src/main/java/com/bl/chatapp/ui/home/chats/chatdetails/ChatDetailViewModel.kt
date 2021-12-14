@@ -20,17 +20,20 @@ import kotlin.collections.ArrayList
 @ExperimentalCoroutinesApi
 class ChatDetailViewModel(private val currentUser: UserDetails, private val foreignUser: UserDetails) : ViewModel() {
 
-    val messageList = ArrayList<Message>()
+    var messageList = ArrayList<Message>()
     private val databaseLayer = DatabaseLayer()
 
     private val _sendMessageStatus = MutableLiveData<Message>()
     val sendMessageStatus = _sendMessageStatus as LiveData<Message>
 
-    private val _getMessageListStatus = MutableLiveData<Boolean>()
-    val getMessageListStatus = _getMessageListStatus as LiveData<Boolean>
+    private val _getMessageListStatus = MutableLiveData<ArrayList<Message>>()
+    val getMessageListStatus = _getMessageListStatus as LiveData<ArrayList<Message>>
 
     private val _chatImageUploadStatus = MutableLiveData<Message>()
     val chatImageUploadStatus = _chatImageUploadStatus as LiveData<Message>
+
+    private val _getPagedMessagesStatus = MutableLiveData<ArrayList<Message>>()
+    val getPagedMessageStatus = _getPagedMessagesStatus as LiveData<ArrayList<Message>>
 
     init {
         getMessages(currentUser, foreignUser)
@@ -41,8 +44,7 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
         messageText: String, messageType: String
     ) {
         viewModelScope.launch {
-            val cal = Calendar.getInstance()
-            val time = cal.timeInMillis
+            val time = System.currentTimeMillis()
             var messageWrapper = MessageWrapper(messageText, time, messageType)
             val resultMessage = databaseLayer.sendNewMessage(currentUser, foreignUser, messageWrapper)
             if (resultMessage != null) {
@@ -55,10 +57,13 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
     fun getMessages(currentUser: UserDetails, foreignUser: UserDetails) {
         viewModelScope.launch {
             databaseLayer.getMessageList(currentUser, foreignUser).collect {
+                Log.i("ChatDetailViewModel", "messages -> $it")
                 messageList.clear()
-                messageList.addAll(it as ArrayList<Message>)
-                messageList.reverse()
-                _getMessageListStatus.postValue(true)
+                if (it != null) {
+                    messageList.addAll(it)
+                }
+                _getMessageListStatus.postValue(it)
+
             }
         }
     }
@@ -85,6 +90,15 @@ class ChatDetailViewModel(private val currentUser: UserDetails, private val fore
                 databaseLayer.sendNotificationToUser(foreignUser.firebaseTokenId, currentUser.userName, "", message.content)
             } else {
                 databaseLayer.sendNotificationToUser(foreignUser.firebaseTokenId, currentUser.userName, message.content, "")
+            }
+        }
+    }
+
+    fun getPagedMessages(currentUser: UserDetails, foreignUser: UserDetails, offset: Long) {
+        viewModelScope.launch {
+            val pagedMessageList = databaseLayer.getPagedMessages(currentUser, foreignUser, offset)
+            if(pagedMessageList != null) {
+                _getPagedMessagesStatus.postValue(pagedMessageList)
             }
         }
     }
