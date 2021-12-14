@@ -3,13 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="1.0"
-        android:background="@drawable/background_dark" />
+    android:layout_height="match_parent"
+    android:background="@drawable/background_dark">
 
     <TextView
         android:id="@+id/welcome_text"
@@ -129,7 +124,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            app:ccp_contentColor="@color/white"/>
+            app:ccp_contentColor="@color/white" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
